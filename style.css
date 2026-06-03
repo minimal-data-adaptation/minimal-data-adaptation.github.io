@@ -610,3 +610,278 @@ video.r2s-video-item {
   /* Color will be inherited from .bibtex-code */
 }
 /* --- End BibTeX Styling --- */
+
+/* ============================================================ */
+/* === MiDAS / Minimal-Data Adaptation site additions ========= */
+/* ============================================================ */
+
+/* Three-ingredient hero pillars */
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 30px 0 40px 0;
+}
+.pillar {
+  border: 1.5px solid #000;
+  border-radius: 15px;
+  padding: 20px 22px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+.pillar-num {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #777;
+  margin-bottom: 8px;
+}
+.pillar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.25;
+}
+.pillar-body {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.55;
+}
+.pillar-source {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #777;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #ccc;
+}
+@media (max-width: 800px) {
+  .pillars { grid-template-columns: 1fr; }
+}
+
+/* Question / Finding pattern used in §5 and §6 */
+.qf-block {
+  margin: 40px 0 30px 0;
+}
+.qf-question {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 16px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+.qf-finding {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 16px;
+  color: #1b1b1b;
+}
+.qf-body {
+  font-size: 19px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+/* Two-column figure (e.g. critical state + UMAP) */
+.fig-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 20px;
+}
+.fig-two-col img {
+  margin: 0;
+  width: 100%;
+  height: auto;
+}
+@media (max-width: 700px) {
+  .fig-two-col { grid-template-columns: 1fr; }
+}
+
+/* Multi-column figure grid (perturbation panels) */
+.fig-grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+}
+.fig-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+.fig-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+.fig-grid-5 img,
+.fig-grid-3 img,
+.fig-grid-2 img {
+  margin: 0;
+  width: 100%;
+  height: auto;
+}
+.fig-grid-5 .sub-caption,
+.fig-grid-3 .sub-caption,
+.fig-grid-2 .sub-caption {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  color: #555;
+  text-align: center;
+  margin-top: 6px;
+}
+@media (max-width: 900px) {
+  .fig-grid-5 { grid-template-columns: repeat(2, 1fr); }
+  .fig-grid-3 { grid-template-columns: 1fr; }
+}
+
+/* Single image inside content (avoids the global negative margins from #figure-x-img) */
+.fig-single {
+  margin: 20px 0;
+}
+.fig-single img {
+  margin: 0;
+  width: 100%;
+  height: auto;
+}
+
+/* Wrapper to allow narrower figures */
+.fig-narrow {
+  max-width: 640px;
+  margin: 20px auto;
+}
+.fig-narrow img {
+  margin: 0;
+  width: 100%;
+  height: auto;
+}
+
+/* Results table */
+.results-table-wrapper {
+  margin: 30px 0;
+  overflow-x: auto;
+}
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 13px;
+  background-color: #fff;
+  border: 1.5px solid #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.results-table th,
+.results-table td {
+  padding: 8px 10px;
+  text-align: right;
+  border-bottom: 1px solid #e4e4e4;
+}
+.results-table th {
+  background-color: #1b1b1b;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+.results-table th.task-col,
+.results-table td.task-col {
+  text-align: left;
+}
+.results-table tr.benchmark-row td {
+  background-color: #f1eadb;
+  font-weight: 700;
+  text-align: left;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+.results-table tr.avg-row td {
+  font-weight: 700;
+  background-color: #fbf6ea;
+  border-top: 2px solid #1b1b1b;
+}
+.results-table td.midas-col,
+.results-table th.midas-col {
+  background-color: #fffbe9;
+  font-weight: 700;
+}
+.results-table tr.avg-row td.midas-col {
+  background-color: #fff3b8;
+}
+.results-table .pm {
+  color: #888;
+  font-size: 11px;
+  margin-left: 2px;
+}
+.results-table caption {
+  caption-side: bottom;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 13px;
+  color: #555;
+  text-align: center;
+  margin-top: 10px;
+  padding: 0 20px;
+}
+
+/* Method recipe steps */
+.recipe-step {
+  border-left: 4px solid #1b1b1b;
+  padding: 4px 20px;
+  margin: 24px 0;
+}
+.recipe-step-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.recipe-step-body {
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+/* Anonymous authors block (simpler) */
+.authors.anonymous {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 18px;
+  color: #333;
+  letter-spacing: 0.5px;
+}
+.authors.anonymous .affiliation {
+  font-weight: 600;
+  font-size: 16px;
+  color: #111;
+}
+
+/* Force figures inside .qf-block to inherit no-margin */
+.qf-block img {
+  margin: 0;
+  width: 100%;
+  height: auto;
+}
+
+/* Real-world filmstrip stacking */
+.filmstrip-row {
+  margin-top: 20px;
+}
+.filmstrip-row img {
+  margin: 0 0 16px 0;
+  width: 100%;
+  height: auto;
+  display: block;
+}

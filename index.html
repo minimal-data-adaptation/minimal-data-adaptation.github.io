@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>VideoMimic</title>
-  <link rel="icon" href="./figs/logo.png" type="image/png">
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+  <title>Adaptation of Generalist Robot Policies with Minimal Data</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,498 +12,346 @@
     <hr>
     <ul>
       <li><a href="#abstract">Abstract</a></li>
-      <li><a href="#deploy-in-real">Real-world Demo</a></li>
-      <li><a href="#approach">Approach</a></li>
-      <li class="toc-subsection"><a href="#real-to-sim">Real to Sim</a></li>
-      <li class="toc-subsection"><a href="#training-in-sim">Training in Sim</a></li>
-      <li><a href="#acknowledgements">Acknowledgements</a></li>
+      <li><a href="#demos">What 1 demo gets you</a></li>
+      <li><a href="#regime">Minimal-Data Adaptation</a></li>
+      <li><a href="#enables">What enables MDA?</a></li>
+      <li class="toc-subsection"><a href="#q1-coarse">Q1 &middot; Coarse behavior</a></li>
+      <li class="toc-subsection"><a href="#q2-reps">Q2 &middot; Pretrained reps</a></li>
+      <li class="toc-subsection"><a href="#q3-support">Q3 &middot; Beyond the prior</a></li>
+      <li><a href="#generalization">Generalization &amp; robustness</a></li>
+      <li class="toc-subsection"><a href="#g1-obs">Q1 &middot; Observation shifts</a></li>
+      <li class="toc-subsection"><a href="#g2-state">Q2 &middot; State shifts</a></li>
+      <li class="toc-subsection"><a href="#g3-coverage">Q3 &middot; Coverage</a></li>
+      <li><a href="#method">MiDAS recipe</a></li>
+      <li><a href="#limitations">Limitations</a></li>
+      <li><a href="#bibtex">BibTeX</a></li>
     </ul>
   </div>
 
   <div class="main-content">
-    <div class="hero-text">VideoMimic</div>
-    <div class="sub-hero-text">Visual imitation enables contextual humanoid control</div>
+    <div class="hero-text">Adaptation of Generalist Robot Policies with Minimal Data</div>
+    <div class="sub-hero-text">A pretrained VLA, one demonstration, and autonomous interaction is enough &mdash; here&rsquo;s why.</div>
 
-    <!-- Add Authors -->
-    <div class="authors">
-      <a href="https://allshire.org/" target="_blank">Arthur Allshire*</a>, <a href="https://hongsukchoi.github.io/" target="_blank">Hongsuk Choi*</a>, <a href="https://www.junyi42.com/" target="_blank">Junyi Zhang*</a>, <a href="https://mcallisterdavid.com/" target="_blank">David McAllister*</a>, <a href="https://antoniomacaronio.github.io/personal-website/#/home/" target="_blank">Anthony Zhang</a>, <a href="https://chungmin99.github.io/" target="_blank">Chung Min Kim</a>,<br>
-      <a href="https://people.eecs.berkeley.edu/~trevor/" target="_blank">Trevor Darrell</a>, <a href="https://people.eecs.berkeley.edu/~pabbeel/" target="_blank">Pieter Abbeel</a>, <a href="https://people.eecs.berkeley.edu/~malik/" target="_blank">Jitendra Malik</a>, <a href="https://people.eecs.berkeley.edu/~kanazawa/" target="_blank">Angjoo Kanazawa.</a>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(*:equal contribution)
-      <span class="affiliation">University of California, Berkeley</span>
-      <span class="affiliation" style="color: #555; text-align: center; font-size: 20px; margin-top: 6px;">CoRL 2025, Best Student Paper Award</span>
+    <div class="authors anonymous">
+      Anonymous Authors
+      <span class="affiliation">CoRL 2026 Submission &middot; Under Review</span>
     </div>
-    <!-- End Authors -->
 
-    <!-- use the video ./figs/videomimic_teaser.mp4 -->
-    <video id="teaser-video" src="./figs/videomimic_teaser.mp4" width="100%" height="100%" controls muted playsinline autoplay></video>
-    <!-- Caption for Figure 1 (Teaser Video) -->
+    <div class="fig-single">
+      <img src="./figs/midas/main_fig.jpg" alt="Overview of minimal-data adaptation: pretraining + 1 demo + online residual RL">
+    </div>
     <p class="figure-caption">
-        <span style="font-variant: small-caps;">VideoMimic</span> is a real-to-sim-to-real pipeline that converts monocular videos into transferable humanoid skills, letting robots learn context-aware behaviors (terrain-traversing, climbing, sitting) in a single policy.
+      <b>Overview.</b> A single demonstration is sparse and underdetermined on its own, but pretrained VLA representations turn it into a useful anchor for adaptation. Few-demo behavior cloning narrows the search space to a task-relevant region around the demonstration, and online residual RL then expands local success by learning value-guided corrections on top of the warm-started base policy.
     </p>
 
-    <!-- Add Quick Links Here -->
     <div class="quick-links">
-      <a href="./VideoMimic.pdf" target="_blank">[pdf]</a>
-      <a href="https://arxiv.org/abs/2505.03729" target="_blank">[arxiv]</a>
-      <a href="https://github.com/hongsukchoi/VideoMimic">[code]</a> 
-      <!-- <a href="#gallery-section-anchor">[gallery]</a> -->
+      <a href="./MinimalDataAdaptation.pdf" target="_blank">[pdf]</a>
+      <a href="#" target="_blank">[code &mdash; coming soon]</a>
     </div>
-    
-    <div class="tagline" id="abstract">Abstract.</div>
 
+    <div class="tagline" id="abstract">Abstract.</div>
+    <div class="section">
+      A central goal of robot learning is to move beyond task-specific human data collection toward robots that improve through autonomous interaction. Yet fully autonomous learning remains difficult with current policies: sparse rewards and weak zero-shot exploration make it unlikely that a robot will discover successful behavior from scratch. We study <b>minimal-data adaptation</b>, a regime in which a pretrained robot policy must learn a new task from as little as one demonstration followed by autonomous online interaction. This setting minimizes task-specific supervision while testing whether pretrained policies provide enough structure to make reinforcement learning tractable. We present <b>MiDAS</b>, an offline-to-online RL framework that first anchors a pretrained VLA to the target task with few-demo behavior cloning, then improves it through value-based online residual RL. Across LIBERO and RoboCasa, MiDAS recovers strong task performance from as little as one demonstration, substantially outperforming baselines and generalizing beyond demonstrated conditions. To the best of our knowledge, this is the first demonstration of reliable robot policy adaptation from a single task demonstration. We further validate MiDAS on bimanual YAM hardware, where it learns effective behaviors with roughly six hours of autonomous interaction.
+    </div>
 
     <div class="section">
+      Autonomous adaptation requires <b>three ingredients</b>. The policy must (i) represent high-dimensional observations in a form useful for control and value learning, (ii) produce behavior that reaches reward-bearing regions during deployment, and (iii) use this experience to improve efficiently. Modern VLAs make progress on (i) and (ii), but are not reliable zero-shot learners. Our central question: <i>can minimal task-specific supervision &mdash; a single demonstration &mdash; close this gap?</i>
+    </div>
 
-        How can we teach humanoids to climb staircases and sit on chairs using the surrounding environment context? Arguably, the simplest way is to <em>just show them</em>&mdash;casually capture a human motion video and feed it to humanoids.
-        We introduce <span style="font-variant: small-caps;">VideoMimic</span>, a real-to-sim-to-real pipeline that mines everyday videos, jointly reconstructs the humans and the environment, and produces whole-body control policies for humanoid robots that perform the corresponding skills.
-       We demonstrate the results of our pipeline on real humanoid robots, showing robust, repeatable contextual control such as staircase ascents and descents, sitting and standing from chairs and benches, as well as other dynamic whole-body skills&mdash;all from a single policy, conditioned on the environment and global root commands. 
-       <span style="font-variant: small-caps;">VideoMimic</span> offers a scalable path towards teaching humanoids to operate in diverse real-world environments.
-    
-    </div> 
-
-    <div class="tagline" id="deploy-in-real">Real-world Demo.</div>
-
-    <!-- Video Gallery Section - STAIRS VIDEOS -->
-    <div class="video-gallery-section" id="stairsGallerySection">
-      <div class="video-gallery-container">
-        <div class="video-gallery" id="videoGalleryStairs">
-          <!-- Videos remain here - ADD autoplay -->
-          <video class="gallery-video" src="./stairs/1.mp4" autoplay muted playsinline loop></video>
-          <video class="gallery-video" src="./stairs/2.mp4" autoplay muted playsinline loop></video>
-          <video class="gallery-video" src="./stairs/7.mp4" autoplay muted playsinline loop></video>
-          <video class="gallery-video" src="./stairs/4.mp4" autoplay muted playsinline loop></video>
-          <video class="gallery-video" src="./stairs/5.mp4" autoplay muted playsinline loop></video>
-          <video class="gallery-video" src="./stairs/6.mp4" autoplay muted playsinline loop></video>
-          <video class="gallery-video" src="./stairs/3.mp4" autoplay muted playsinline loop></video>
-          <video class="gallery-video" src="./stairs/8.mp4" autoplay muted playsinline loop></video>
-          <!-- Add more videos as needed, ensuring they have autoplay muted loop -->
-        </div>
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-num">INGREDIENT 1</div>
+        <div class="pillar-title">Represent observations for control &amp; value learning</div>
+        <div class="pillar-body">High-dimensional pixels and language need to become features that are useful for both action prediction and value learning.</div>
+        <div class="pillar-source">Supplied by: <b>VLA pretraining</b></div>
       </div>
-      <!-- Container for the caption AND buttons -->
-      <div class="gallery-caption-container">
-          <!-- Move button controls INSIDE caption container -->
-          <div class="gallery-nav-controls">
-              <button class="gallery-nav left" id="scrollLeftBtnStairs">&lt;</button>
-              <button class="gallery-nav right" id="scrollRightBtnStairs">&gt;</button>
-          </div>
-          <!-- Caption text -->
-          <p class="figure-caption gallery-caption">
-              <b>Stairs climbing up/down:</b> The robot confidently ascends and descends various staircases, showcasing stable and adaptive locomotion.
-          </p>
+      <div class="pillar">
+        <div class="pillar-num">INGREDIENT 2</div>
+        <div class="pillar-title">Reach reward-bearing regions of the state space</div>
+        <div class="pillar-body">Online RL needs the robot to occasionally succeed. The policy must at least attempt the task in a way that produces signal.</div>
+        <div class="pillar-source">Supplied by: <b>1 demonstration</b> (on top of pretraining)</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">INGREDIENT 3</div>
+        <div class="pillar-title">Use experience to improve efficiently</div>
+        <div class="pillar-body">Sparse interaction data must yield reliable control &mdash; including actions <i>outside</i> what the base policy reliably proposes.</div>
+        <div class="pillar-source">Supplied by: <b>Autonomous online interaction</b></div>
       </div>
     </div>
-  <!-- End Video Gallery Section -->
 
-  <!-- Video Gallery Section - SITTING VIDEOS -->
-  <div class="video-gallery-section" id="gallery-section-anchor">
-    <div class="video-gallery-container">
-      <div class="video-gallery" id="videoGallerySitting">
-        <!-- Videos remain here - ADD autoplay -->
-        <video class="gallery-video" src="./sitting/5.mp4" autoplay muted playsinline loop></video>
-        <video class="gallery-video" src="./sitting/3.mp4" autoplay muted playsinline loop></video>
-        <video class="gallery-video" src="./sitting/1.mp4" autoplay muted playsinline loop></video>
-        <video class="gallery-video" src="./sitting/2.mp4" autoplay muted playsinline loop></video>
-        <video class="gallery-video" src="./sitting/4.mp4" autoplay muted playsinline loop></video>
-        <video class="gallery-video" src="./sitting/0.mp4" autoplay muted playsinline loop></video>
-        <!-- Add more videos as needed, ensuring they have autoplay muted loop -->
-      </div>
+    <div class="tagline" id="demos">What does one demonstration get you?</div>
+    <div class="section">
+      Before the analysis, here is what one demonstration plus autonomous interaction actually achieves on a real bimanual robot. Using <span style="font-variant: small-caps;">&pi;<sub>0.5</sub></span> as the pretrained base policy and a single human demonstration, MiDAS runs online residual RL on a bimanual YAM platform and converges to high task success in roughly 5&ndash;6 hours of autonomous interaction.
     </div>
-    <!-- Container for the caption AND buttons -->
-    <div class="gallery-caption-container">
-        <!-- Move button controls INSIDE caption container -->
-        <div class="gallery-nav-controls">
-            <button class="gallery-nav left" id="scrollLeftBtnSitting">&lt;</button>
-            <button class="gallery-nav right" id="scrollRightBtnSitting">&gt;</button>
-        </div>
-        <!-- Caption text -->
-        <p class="figure-caption gallery-caption">
-            <b>Sitting/Standing:</b> Our robot demonstrates smooth sitting and standing behaviors on different chairs and benches, adapting to object heights and shapes.
-        </p>
-    </div>
-  </div>
-  <!-- End Video Gallery Section -->
 
-  <!-- Video Gallery Section - TRAVERSING VIDEOS -->
-    <div class="video-gallery-section" id="traversingGallerySection">
-      <div class="video-gallery-container">
-        <div class="video-gallery" id="videoGalleryTraversing">
-          <!-- Videos remain here - ADD autoplay -->
-          <video class="gallery-video" src="./traversing/1.mp4" autoplay muted playsinline loop></video>
-          <video class="gallery-video" src="./traversing/5.mp4" autoplay muted playsinline loop></video>
-          <video class="gallery-video" src="./traversing/7.mp4" autoplay muted playsinline loop></video>
-          <video class="gallery-video" src="./traversing/4.mp4" autoplay muted playsinline loop></video>
-          <video class="gallery-video" src="./traversing/2.mp4" autoplay muted playsinline loop></video>
-          <video class="gallery-video" src="./traversing/6.mp4" autoplay muted playsinline loop></video>
-          <video class="gallery-video" src="./traversing/3.mp4" autoplay muted playsinline loop></video>
-          <!-- Add more videos as needed, ensuring they have autoplay muted loop -->
-        </div>
-      </div>
-      <!-- Container for the caption AND buttons -->
-      <div class="gallery-caption-container">
-          <!-- Move button controls INSIDE caption container -->
-          <div class="gallery-nav-controls">
-              <button class="gallery-nav left" id="scrollLeftBtnTraversing">&lt;</button>
-              <button class="gallery-nav right" id="scrollRightBtnTraversing">&gt;</button>
-          </div>
-          <!-- Caption text -->
-          <p class="figure-caption gallery-caption">
-              <b>Terrain traversing:</b> Watch the humanoid navigate diverse terrains, including uneven ground, slopes, and stepping over small obstacles.
-          </p>
-      </div>
+    <div class="filmstrip-row">
+      <img src="./figs/midas/rl_pickknife_filmstrip.png" alt="Real-world filmstrip: knife and donut onto plate (T2)">
+      <img src="./figs/midas/pickplace_blocks_film_strip.png" alt="Real-world filmstrip: green and blue block pick-and-place (T1)">
     </div>
-  <!-- End Video Gallery Section -->
-    <div class="tagline" id="approach">Approach.</div>
+    <p class="figure-caption">
+      <b>Real-world rollouts on a bimanual YAM platform.</b>
+      <b>(T1)</b> Place a green block in the right container and a blue block in the left. The 1-demo warm-start reaches <b>40%</b>; online RL improves it to <b>67%</b> and produces qualitatively new corrective behaviors.
+      <b>(T2)</b> Place a knife and a donut on a plate. The warm-start is substantially weaker; online RL improves success from <b>27% &rarr; 80%</b> after 5&ndash;6 hours of autonomous interaction.
+    </p>
 
-    <div class="r2s-vertical-layout">
-      <div class="r2s-video-row r2s-top-row">
-        <video class="r2s-video-item r2s-video-input" src="./single/input.mp4" autoplay muted loop playsinline></video>
-        <video class="r2s-video-item r2s-video-smpl" src="./single/smpl.mp4" autoplay muted loop playsinline></video>
+    <div class="fig-single">
+      <img src="./figs/midas/robocasa_all_tasks_grid.png" alt="RoboCasa task grid">
+    </div>
+    <p class="figure-caption">
+      <b>In simulation</b>, MiDAS adapts a pretrained VLA to long-horizon LIBERO-Long and RoboCasa-365 kitchen tasks from a single demonstration, recovering strong success rates where baselines stall (see Q3 below).
+    </p>
+
+    <div class="tagline" id="regime">The Minimal-Data Adaptation regime.</div>
+    <div class="section">
+      Given a pretrained vision&ndash;language&ndash;action policy <span style="font-variant: small-caps;">&pi;<sub>base</sub></span>, <i>K</i> successful demonstrations in a target environment, and access to autonomous interaction with that environment, <b>minimal-data adaptation (MDA)</b> asks whether we can learn an adapted policy that achieves high return using only this limited supervision. The demonstrations are not meant to solve the task on their own &mdash; they serve as a minimal scaffold that makes subsequent autonomous learning tractable. The case <i>K</i>&nbsp;=&nbsp;1 is the sharpest version: one demonstration is rarely sufficient for imitation, but may expose enough task-relevant behavior for interaction-driven improvement to begin.
+    </div>
+    <div class="section">
+      MDA targets the narrow regime where autonomous learning <i>first</i> becomes tractable. With no task-specific data, current pretrained policies often fail to reach reward often enough for sparse-reward interaction to improve them. A small number of demonstrations can make the problem just structured enough &mdash; exposing the intended behavior and bringing the policy into the vicinity of success &mdash; while leaving robustness and distribution coverage to be learned online. This regime separates the roles of the three available sources of supervision: structure inherited from <b>pretraining</b>, task information provided by a <b>demonstration</b>, and corrections learned through <b>autonomous interaction</b>.
+    </div>
+
+    <!-- ====================== SECTION 5 ====================== -->
+    <div class="tagline" id="enables">What enables minimal-data adaptation?</div>
+    <div class="section">
+      We dissect each of the three ingredients. Setup: we use <span style="font-variant: small-caps;">&pi;<sub>0.5</sub></span> as <span style="font-variant: small-caps;">&pi;<sub>base</sub></span> and run MiDAS with <i>K</i>&nbsp;=&nbsp;1 on <b>LIBERO-Long</b> (long-horizon language-conditioned manipulation) and <b>RoboCasa-365</b> (long-horizon household manipulation in diverse kitchen scenes).
+    </div>
+
+    <!-- Q1 -->
+    <div class="qf-block" id="q1-coarse">
+      <div class="qf-question">Question 1 &middot; what does the pretrained model + one demo recover?</div>
+      <div class="qf-finding">Finding: Pretraining and task-specific demonstrations together recover <i>coarse task behavior</i>, but not reliable control.</div>
+      <div class="qf-body">
+        We compare 1-demo BC on <span style="font-variant: small-caps;">&pi;<sub>0.5</sub></span> against three alternatives: <b>(a)</b> a flow-matching policy on pretrained ResNet features &mdash; tests whether <i>generic visual pretraining</i> suffices; <b>(b)</b> a flow-matching policy on <i>privileged state</i> &mdash; tests whether near-optimal observations alone close the gap; <b>(c)</b> the zero-shot <span style="font-variant: small-caps;">&pi;<sub>base</sub></span> &mdash; tests whether pretraining alone identifies the task. All three perform poorly. ResNet flow-policy gets non-zero success on only 3/10 LIBERO-Long tasks; the privileged-state policy and <span style="font-variant: small-caps;">&pi;<sub>base</sub></span> sit at 0%. <b>MDA needs both</b> task grounding from the demonstration <i>and</i> behavior-aware representations from pretraining &mdash; privileged state inputs alone do not recover this behavior, so the benefit of pretraining goes beyond improved state representation.
       </div>
-      <div class="r2s-caption-row">
-        <p class="r2s-caption-item">Input Video</p>
-        <p class="r2s-caption-item">Human + Scene Reconstruction</p>
+
+      <div class="fig-narrow">
+        <img src="./figs/midas/dp_bc_cmp.png" alt="Performance of different task representations for behavior cloning">
       </div>
-      <div class="r2s-video-row r2s-bottom-row">
-        <video class="r2s-video-item r2s-video-g1" src="./single/g1.mp4" autoplay muted loop playsinline></video>
-        <div class="stacked-ego-videos">
-          <video class="r2s-video-item r2s-video-ego-rgb" src="./single/ego_rgb.mp4" autoplay muted loop playsinline></video>
-          <video class="r2s-video-item r2s-video-ego-depth" src="./single/ego_depth.mp4" autoplay muted loop playsinline></video>
-        </div>
-        <video class="r2s-video-item r2s-video-sim" src="./single/sim.mp4" autoplay muted loop playsinline></video>
+      <p class="figure-caption"><b>Fig.</b> Performance of different task representations for behavior cloning. Only the pretrained VLA + 1 demo recovers any meaningful task behavior.</p>
+
+      <div class="qf-body">
+        Yet even <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>1</sup> isn&rsquo;t reliable. Qualitatively, the policy approaches the right object, attempts the right subtask sequence, and follows a trajectory that resembles the demonstration. The failures are in execution: contact, alignment, grasping, and recovery remain brittle.
       </div>
-      <div class="r2s-caption-row">
-        <p class="r2s-caption-item">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G1 Retargeted Results</p>
-        <p class="r2s-caption-item">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Egoview (RGB/Depth)</p>
-        <p class="r2s-caption-item">Training in Simulation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+      <div class="fig-single">
+        <img src="./figs/midas/both_mokapots_filmstrip.png" alt="Few-demo BC recovers coarse task behavior but fails fine-grained control">
       </div>
       <p class="figure-caption">
-        <b>From a monocular video, we jointly reconstruct metric-scale 4D human trajectories and dense scene geometry. The human motion is retargeted to a humanoid, and with the scene converted to a mesh in the simulator, the motion is used as a reference to train a context-aware whole-body control policy. While our policy does not use RGB conditioning for now, we demonstrate the potential of our reconstruction for ego-view rendering.</b>
+        <b>Few-demo BC recovers task-level behavior, but not fine-grained control.</b> Rollouts of <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> at <i>K</i>=1 on <i>Both Moka Pots &rarr; Stove</i>. The policy reaches the right objects but fails to grasp the second pot under orientation changes.
       </p>
     </div>
 
-    <div class="section-subtitle" id="real-to-sim">1. Real to Sim.</div>
+    <!-- Q2 -->
+    <div class="qf-block" id="q2-reps">
+      <div class="qf-question">Question 2 &middot; how much do pretrained representations help <i>online</i> learning?</div>
+      <div class="qf-finding">Finding: VLA representations are <i>control-aligned</i> &mdash; sparse-reward residual RL becomes dramatically more sample-efficient.</div>
+      <div class="qf-body">
+        We vary the representation used by the residual learner while keeping everything else fixed.
+        With a <b>ResNet fine-tuned from scratch</b>, MiDAS fails to converge at <i>K</i>=1 &mdash; sparse interaction can&rsquo;t learn task-relevant visual features <i>and</i> action priors simultaneously.
+        With <b>frozen DINO features</b>, learning eventually progresses but needs substantially more interaction &mdash; visual invariances alone aren&rsquo;t enough.
+        With features from the pretrained <span style="font-variant: small-caps;">&pi;<sub>0.5</sub></span> backbone, learning is rapid: VLA pretraining yields representations already <i>aligned with robot control</i>.
+        Notably, <span style="font-variant: small-caps;">&pi;<sub>base</sub></span>, <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup>, and <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>50</sup> features perform similarly &mdash; the sample-efficiency gain comes from the <i>pretrained representation</i>, not from task-specific BC of the backbone.
+      </div>
 
-  <!-- Video Gallery Section - SITTING VIDEOS -->
-  <div class="video-gallery-section" id="reconstructionGallerySection">
-    <div class="video-gallery-container">
-      <div class="video-gallery" id="videoGalleryReconstruction">
-        <!-- Videos remain here - ADD autoplay -->
-        <video class="gallery-video" src="./reconstruction/6.mp4" autoplay muted playsinline loop></video>
-        <video class="gallery-video" src="./reconstruction/11.mp4" autoplay muted playsinline loop></video>
-        <video class="gallery-video" src="./reconstruction/13.mp4" autoplay muted playsinline loop></video>
-        <video class="gallery-video" src="./reconstruction/7.mp4" autoplay muted playsinline loop></video>
-        <video class="gallery-video" src="./reconstruction/14.mp4" autoplay muted playsinline loop></video>
-        <!-- Add more videos as needed, ensuring they have autoplay muted loop -->
+      <div class="fig-narrow">
+        <img src="./figs/midas/libero_reps.png" alt="Online adaptation with different representations">
+      </div>
+      <p class="figure-caption"><b>Fig.</b> Online adaptation with different representations. Frozen pretrained VLA features make sparse-reward residual RL sample-efficient where alternatives fail.</p>
+    </div>
+
+    <!-- Q3 -->
+    <div class="qf-block" id="q3-support">
+      <div class="qf-question">Question 3 &middot; can the missing fine-grained control be reached <i>within</i> the base policy&rsquo;s support?</div>
+      <div class="qf-finding">Finding: No &mdash; closing the control gap requires actions <i>outside</i> the base policy&rsquo;s effective support. Value-based residual RL provides exactly this.</div>
+      <div class="qf-body">
+        The previous analysis showed that <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> often produces task-relevant behavior but solves the task inconsistently. Do the right actions already lie within its support but are not reliably selected, or do they fall outside its effective support? We test this by comparing MiDAS to two representative alternatives that stay <i>inside</i> the base policy&rsquo;s distribution:
+        <b>Filtered BC</b>, which sharpens modes <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> already reaches by finetuning on successful online rollouts; and
+        <b>Diffusion-Steering RL (DSRL)</b>, which steers within the action distribution by modifying its initial noise. In contrast, MiDAS applies value-guided <i>residual</i> corrections, allowing executed actions to move beyond high-probability samples from the base policy.
+      </div>
+
+      <div class="fig-two-col">
+        <div>
+          <img src="./figs/midas/libero_base_view_t386.png" alt="Trajectory critical state">
+          <div class="sub-caption">(a) Trajectory critical state</div>
+        </div>
+        <div>
+          <img src="./figs/midas/umap_t386_combined.png" alt="UMAP of action chunks at a critical step">
+          <div class="sub-caption">(b) UMAP of actions</div>
+        </div>
+      </div>
+      <p class="figure-caption">
+        <b>MiDAS reaches actions outside the effective support of <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup>.</b> UMAP of action chunks at a critical step of a LIBERO-Long rollout. Filtered BC and DSRL remain concentrated near samples from <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> and fail; MiDAS selects an action in a disjoint region with higher <i>Q*</i> and succeeds.
+      </p>
+
+      <div class="qf-body">
+        Empirically, Filtered BC and DSRL improve only marginally over <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup>, while MiDAS achieves substantially higher success across both benchmarks:
+      </div>
+
+      <div class="results-table-wrapper">
+        <table class="results-table">
+          <caption><b>Table 1.</b> One-demo adaptation results (% success, mean &plusmn; std over 3 seeds).</caption>
+          <thead>
+            <tr>
+              <th class="task-col">Task</th>
+              <th>BC</th>
+              <th>DSRL</th>
+              <th>Filt. BC</th>
+              <th class="midas-col">MiDAS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="benchmark-row"><td colspan="5">LIBERO-Long</td></tr>
+            <tr><td class="task-col">Alph. Soup + Cr. Cheese &rarr; Basket</td><td>12.7<span class="pm">&plusmn;1.2</span></td><td>16.0<span class="pm">&plusmn;6.9</span></td><td>14.0<span class="pm">&plusmn;2.0</span></td><td class="midas-col">98.7<span class="pm">&plusmn;1.2</span></td></tr>
+            <tr><td class="task-col">Alph. Soup + Tom. Sauce &rarr; Basket</td><td>4.0<span class="pm">&plusmn;3.5</span></td><td>3.3<span class="pm">&plusmn;1.2</span></td><td>2.0<span class="pm">&plusmn;0.0</span></td><td class="midas-col">82.0<span class="pm">&plusmn;5.3</span></td></tr>
+            <tr><td class="task-col">Black Bowl &rarr; Bottom Drawer</td><td>22.7<span class="pm">&plusmn;6.4</span></td><td>26.7<span class="pm">&plusmn;1.2</span></td><td>28.7<span class="pm">&plusmn;10.3</span></td><td class="midas-col">96.7<span class="pm">&plusmn;2.3</span></td></tr>
+            <tr><td class="task-col">Book &rarr; Caddy</td><td>37.3<span class="pm">&plusmn;7.0</span></td><td>30.7<span class="pm">&plusmn;12.2</span></td><td>28.0<span class="pm">&plusmn;2.0</span></td><td class="midas-col">92.7<span class="pm">&plusmn;5.0</span></td></tr>
+            <tr><td class="task-col">Both Moka Pots &rarr; Stove</td><td>13.3<span class="pm">&plusmn;3.1</span></td><td>20.7<span class="pm">&plusmn;2.3</span></td><td>19.3<span class="pm">&plusmn;7.0</span></td><td class="midas-col">90.7<span class="pm">&plusmn;2.3</span></td></tr>
+            <tr><td class="task-col">Cr. Cheese + Butter &rarr; Basket</td><td>34.0<span class="pm">&plusmn;9.2</span></td><td>39.3<span class="pm">&plusmn;1.2</span></td><td>68.0<span class="pm">&plusmn;2.0</span></td><td class="midas-col">100.0<span class="pm">&plusmn;0.0</span></td></tr>
+            <tr><td class="task-col">Moka Pot &rarr; Stove</td><td>84.0<span class="pm">&plusmn;0.0</span></td><td>92.7<span class="pm">&plusmn;3.1</span></td><td>85.3<span class="pm">&plusmn;8.3</span></td><td class="midas-col">94.0<span class="pm">&plusmn;0.0</span></td></tr>
+            <tr><td class="task-col">White Mug + Choc. Pudding</td><td>33.3<span class="pm">&plusmn;11.7</span></td><td>33.3<span class="pm">&plusmn;10.3</span></td><td>39.3<span class="pm">&plusmn;2.3</span></td><td class="midas-col">85.3<span class="pm">&plusmn;4.2</span></td></tr>
+            <tr><td class="task-col">White Mug + Plates</td><td>30.0<span class="pm">&plusmn;2.0</span></td><td>23.3<span class="pm">&plusmn;3.1</span></td><td>34.7<span class="pm">&plusmn;6.4</span></td><td class="midas-col">76.0<span class="pm">&plusmn;2.0</span></td></tr>
+            <tr><td class="task-col">Yellow-White Mug &rarr; Microwave</td><td>64.0<span class="pm">&plusmn;2.0</span></td><td>47.3<span class="pm">&plusmn;8.3</span></td><td>68.0<span class="pm">&plusmn;7.2</span></td><td class="midas-col">84.7<span class="pm">&plusmn;4.2</span></td></tr>
+            <tr class="avg-row"><td class="task-col">Average</td><td>33.5<span class="pm">&plusmn;1.8</span></td><td>33.3<span class="pm">&plusmn;2.0</span></td><td>38.7<span class="pm">&plusmn;4.8</span></td><td class="midas-col">90.1<span class="pm">&plusmn;0.4</span></td></tr>
+            <tr class="benchmark-row"><td colspan="5">RoboCasa</td></tr>
+            <tr><td class="task-col">Banana: Fridge Drawer &rarr; Shelf</td><td>13.3<span class="pm">&plusmn;2.5</span></td><td>13.9<span class="pm">&plusmn;0.2</span></td><td>19.3<span class="pm">&plusmn;3.1</span></td><td class="midas-col">95.2<span class="pm">&plusmn;2.8</span></td></tr>
+            <tr><td class="task-col">Hot Dog: Counter &rarr; Cabinet</td><td>29.3<span class="pm">&plusmn;0.9</span></td><td>17.6<span class="pm">&plusmn;8.4</span></td><td>36.0<span class="pm">&plusmn;24.0</span></td><td class="midas-col">87.1<span class="pm">&plusmn;8.6</span></td></tr>
+            <tr><td class="task-col">Mug &rarr; Coffee Machine + Start</td><td>24.0<span class="pm">&plusmn;7.1</span></td><td>24.7<span class="pm">&plusmn;3.7</span></td><td>46.7<span class="pm">&plusmn;6.2</span></td><td class="midas-col">81.9<span class="pm">&plusmn;5.7</span></td></tr>
+            <tr><td class="task-col">Cup + Bowl &rarr; Dishwasher + Close</td><td>0.0<span class="pm">&plusmn;0.0</span></td><td>0.0<span class="pm">&plusmn;0.0</span></td><td>0.0<span class="pm">&plusmn;0.0</span></td><td class="midas-col">0.0<span class="pm">&plusmn;0.0</span></td></tr>
+            <tr class="avg-row"><td class="task-col">Average</td><td>22.2<span class="pm">&plusmn;3.5</span></td><td>18.7<span class="pm">&plusmn;4.1</span></td><td>34.0<span class="pm">&plusmn;10.6</span></td><td class="midas-col">88.1<span class="pm">&plusmn;5.7</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="fig-single">
+        <img src="./figs/midas/online_rl_representative_tasks.png" alt="Online RL training curves on representative tasks">
+      </div>
+      <p class="figure-caption">
+        <b>Online learning curves on representative tasks.</b> MiDAS converges to high success within budget; baselines that stay inside the base policy&rsquo;s prior do not.
+      </p>
+
+      <div class="qf-body">
+        The fine-grained control missing from <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> does not lie within the base policy&rsquo;s effective action prior. <b>Sharpening or steering within that prior cannot reach it.</b> Closing the control gap requires online adaptation that expands the action distribution beyond <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup>.
       </div>
     </div>
-    <!-- Container for the caption AND buttons -->
-    <div class="gallery-caption-container">
-        <!-- Move button controls INSIDE caption container -->
-        <div class="gallery-nav-controls">
-            <button class="gallery-nav left" id="scrollLeftBtnReconstruction">&lt;</button>
-            <button class="gallery-nav right" id="scrollRightBtnReconstruction">&gt;</button>
-        </div>
-        <!-- Caption text -->
-        <p class="figure-caption gallery-caption" style="margin-bottom: 30px;">
-            <b>Human + World Reconstruction:</b> Our reconstruction pipeline can handle videos with multiple humans and complex environments from Internet. More results in the <a href="./page1.html" target="_blank">gallery</a>.
-        </p>
+
+    <!-- ====================== SECTION 6 ====================== -->
+    <div class="tagline" id="generalization">Generalization &amp; robustness.</div>
+    <div class="section">
+      Section 5 showed how the three ingredients combine to recover task performance from the few initial conditions in the demonstration. Here we ask: <i>can MiDAS generalize beyond the narrow support of initial states, and if so, how?</i>
+      We test two categories of shifts: <b>(a) observation shifts</b> &mdash; task-irrelevant inputs (color, texture, language paraphrase) &mdash; and <b>(b) state shifts</b> &mdash; dynamically relevant quantities (object position, shape, identity). Evaluation is on the 10 long-horizon tasks in LIBERO-Long.
     </div>
-  </div>
-  <!-- End Video Gallery Section -->
 
-    <a id="figure-1-img" href="figs/2.png" download="2.png">
-      <img src="figs/2-min.png" alt="real-to-sim pipeline">
-    </a>
-    <!-- Caption for Figure 2 -->
-    <p class="figure-caption">
-      <b>Figure 1:</b> The Real-to-Sim pipeline reconstructs human motion and scene geometry from video, outputting simulator-ready data.
-    </p>
+    <!-- G1 -->
+    <div class="qf-block" id="g1-obs">
+      <div class="qf-question">Question 1 &middot; do observation shifts (visual / language) break the adapted policy?</div>
+      <div class="qf-finding">Finding: Observation-level robustness is <i>inherited from the frozen vision&ndash;language backbone</i> &mdash; online RL doesn&rsquo;t cost it.</div>
+      <div class="qf-body">
+        Under color and texture changes, <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>1</sup> retains most of its in-distribution performance, and the adapted policy shows a similar retention pattern despite using only a lightweight residual actor. The same holds under language paraphrases. Both policies share the same frozen VLM backbone, and the RL module adds little perceptual or linguistic capacity, so this robustness is best explained by invariances already present in the pretrained representation. <b>Online RL improves control without sacrificing observation-level generalization.</b>
+      </div>
 
-    <a id="figure-2-img" href="figs/4.png" download="4.png">
-      <img src="figs/4-min.png" alt="Approach Overview">
-    </a>
-    <!-- Caption for Figure 2 -->
-    <p class="figure-caption">
-      <b>Figure 2:</b> Versatile capabilities include handling internet videos, multi-human reconstruction, and ego-view rendering.
-    </p>
+      <div class="fig-grid-2">
+        <div>
+          <img src="./figs/midas/obj_perturbation_comparison.png" alt="Visual shift">
+          <div class="sub-caption">(a) Visual shift (color / texture)</div>
+        </div>
+        <div>
+          <img src="./figs/midas/lang_perturbation_comparison.png" alt="Language shift">
+          <div class="sub-caption">(b) Language shift (paraphrase)</div>
+        </div>
+      </div>
+      <p class="figure-caption"><b>Observation shifts.</b> Pretrained representations preserve performance under visual and language changes.</p>
+    </div>
 
-    <div class="section-subtitle" id="training-in-sim">2. Training in Sim.</div>
+    <!-- G2 -->
+    <div class="qf-block" id="g2-state">
+      <div class="qf-question">Question 2 &middot; what about state shifts that require the policy to act differently?</div>
+      <div class="qf-finding">Finding: Generalization depends on whether <i>new behavior</i> is required. Same behavior in a new location &mdash; yes. New affordance / strategy &mdash; no.</div>
+      <div class="qf-body">
+        Online RL improves over <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>1</sup> under some state shifts &mdash; especially <b>shape changes</b> where the required grasp is similar. This makes sense: the policy executes the same behavior in a different part of the state space. But performance drops sharply under <b>object swaps</b> and <b>object changes</b>: shifts in object affordance or placement can require distinct manipulation strategies, and these are difficult to infer from one demonstration plus interaction around it. This pathology is, in a sense, by design of the minimal-data regime.
+      </div>
 
-    <a id="figure-3-img" href="figs/3.png" download="3.png">
-      <img src="figs/3-min.png" alt="Training in Sim">
-    </a>
-    <!-- Caption for Figure 3 -->
-    <p class="figure-caption">
-      <b>Figure 3:</b> Policy training pipeline in simulation, progressing from MoCap pre-training to environment-aware tracking and distillation.
-    </p>
+      <div class="fig-grid-3">
+        <div>
+          <img src="./figs/midas/shape_perturbation_comparison.png" alt="Shape change">
+          <div class="sub-caption">(a) Shape change</div>
+        </div>
+        <div>
+          <img src="./figs/midas/swp_perturbation_comparison.png" alt="Object swap">
+          <div class="sub-caption">(b) Object swap</div>
+        </div>
+        <div>
+          <img src="./figs/midas/object_change_comparison.png" alt="Object change">
+          <div class="sub-caption">(c) Object change</div>
+        </div>
+      </div>
+      <p class="figure-caption"><b>State shifts.</b> Online RL improves robustness when the same underlying behavior suffices (a). It does not bridge shifts that demand a distinct manipulation strategy (b, c).</p>
+    </div>
 
-    <div class="additional-video-row">
-      <video id="input-video-cropped" class="additional-video-item" src="train_in_sim/vid1_input.mp4" autoplay muted playsinline loop></video>
-      <video class="additional-video-item" src="train_in_sim/vid1_3d.mp4" autoplay muted playsinline loop></video>
-      <video class="additional-video-item" src="train_in_sim/vid1_rl.mp4" autoplay muted playsinline loop></video>
-  </div>
-  <div class="additional-video-row" style="margin-top: 20px;">
-    <video id="input-video-cropped2" class="additional-video-item" src="train_in_sim/vid2_input.mp4#t=3" style="margin-right: 20px;" autoplay muted playsinline loop></video>
-    <video id="input-video-cropped3" class="additional-video-item" src="train_in_sim/vid2_3d.mp4" autoplay muted playsinline loop></video>
-    <video id="input-video-cropped4" class="additional-video-item" src="train_in_sim/vid2_rl.mp4" style="margin-left: 20px;" autoplay muted playsinline loop></video>
-</div>
-  <div class="r2s-caption-row" style="margin-top: 10px;">
-      <p class="r2s-caption-item">(a) input video</p>
-      <p class="r2s-caption-item">(b) reconstructed environment and human</p>
-      <p class="r2s-caption-item">(c) tracking the motion in sim</p>
-  </div>
-  <p class="figure-caption">
-          We conducted experiments to track internet videos of human performing complex motions, including crawling down the stairs and vaulting over a large block. This shows our pipeline's ability to learn from scalable web data and its ability to learn diverse motions.
-  </p>
+    <!-- G3 -->
+    <div class="qf-block" id="g3-coverage">
+      <div class="qf-question">Question 3 &middot; can broader coverage &mdash; without more demonstrations &mdash; expand the generalization boundary?</div>
+      <div class="qf-finding">Finding: Yes. A reset-distribution curriculum recovers most of the position-generalization gap with a 50-demo policy &mdash; <i>without</i> additional demos.</div>
+      <div class="qf-body">
+        We progressively widen the reset distribution during online RL. Robustness improves with each stage, closing much of the gap to <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>50</sup> when the perturbed configurations preserve the same underlying manipulation strategy. Naively increasing the breadth of demonstrations helps too. Together, these results say: when the bottleneck is <i>state coverage</i> rather than missing behavior, autonomous interaction can extend the reach of minimal-data adaptation.
+      </div>
 
-    <div class="tagline" id="acknowledgements">Acknowledgements.</div>
-    <div class="section" style="margin-top: -5px;">
-      <p>
-        We thank Brent Yi for his guidance with the excellent 3D visualization tool we use, Viser. We
-        are grateful to Ritvik Singh, Jason Liu, Ankur Handa, Ilija Radosavovic, Himanshu Gaurav-Singh,
-        Haven Feng, and Kevin Zakka for helpful advice and discussions during the paper. We thank Lea
-        M&uuml;ller for helpful discussions at the start of the project. We thank Zhizheng Liu for helpful
-        suggestions on evaluating human and scene reconstruction. We thank Moji Shi and Huayi Wang for
-        advice on using LiDAR heightmap input. We thank Eric Xu, Matthew Liu, Hayeon
-        Jeong, Hyunjoo Lee, Jihoon Choi, Tyler Bonnen, and Yao Tang for their help in capturing and
-        featuring in the video clips used in this project.
-      </p>
+      <div class="fig-narrow">
+        <img src="./figs/midas/pos_perturbation_curriculum.png" alt="Curriculum closes the position-generalization gap">
+      </div>
+      <p class="figure-caption"><b>Curriculum closes the gap.</b> Progressively widening the reset distribution during online RL recovers most of the position-generalization gap with <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>50</sup> without additional demos.</p>
+    </div>
+
+    <!-- ====================== METHOD ====================== -->
+    <div class="tagline" id="method">MiDAS &mdash; the recipe.</div>
+    <div class="section">
+      <b>MiDAS</b> (<b>Mi</b>nimal-<b>D</b>ata <b>A</b>daptation <b>S</b>trategy) is a two-stage instantiation of the principle above: pretraining + 1 demo seed coarse task behavior, and online residual RL closes the control gap. Stage I uses the demonstration to anchor the policy to the task; Stage II uses autonomous interaction to expand the action distribution toward reliable success.
+    </div>
+
+    <div class="recipe-step">
+      <div class="recipe-step-title">Stage I &middot; Behavior cloning on <i>K</i> demonstrations</div>
+      <div class="recipe-step-body">
+        Adapt the pretrained VLA to the task: LoRA on the VLM backbone for compute efficiency, full fine-tuning of the action head with a flow-matching loss. The resulting policy <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> coarsely attempts the task but is not yet reliable.
+      </div>
+    </div>
+
+    <div class="recipe-step">
+      <div class="recipe-step-title">Stage II &middot; Online residual RL with frozen backbone</div>
+      <div class="recipe-step-body">
+        Freeze <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> and train a lightweight residual actor&ndash;critic on top of its representations. At each state, the base policy proposes an action chunk; the residual policy conditions on the state <i>and</i> the proposal, and predicts the executed action directly (a Gaussian-tanh distribution). This conditioning anchors RL to a task-relevant proposal while letting the executed action shift to higher-value regions outside the base policy&rsquo;s reliable support. A critic ensemble is trained with TD learning.
+      </div>
+    </div>
+
+    <div class="recipe-step">
+      <div class="recipe-step-title">Three design choices for the minimal-data regime</div>
+      <div class="recipe-step-body">
+        <b>(1) Offline warm-up.</b> Initialize the residual actor by regressing it onto the base policy&rsquo;s proposals on a buffer of demonstrations + early rollouts. Train the critic on the same buffer with TD learning so it is calibrated to the regions where online improvement begins.
+        <br><br>
+        <b>(2) Success balancing.</b> Maintain a standard replay buffer and a success buffer (both seeded with the <i>K</i> demonstrations). Oversample successful transitions during critic training to keep the value function from collapsing to failure-dominated estimates when the base policy succeeds only 2&ndash;5% of the time.
+        <br><br>
+        <b>(3) Residual training with PA-RL.</b> Sample a single base proposal, draw <i>N</i> residual samples conditioned on it, and apply a PA-RL Best-of-<i>N</i> distillation objective with an action gradient. This produces aggressive value-guided updates while needing only one forward pass through the expensive frozen base.
+      </div>
+    </div>
+
+    <div class="tagline" id="limitations">Limitations.</div>
+    <div class="section">
+      Two caveats. <b>First</b>, the present instantiation remains limited on longer-horizon tasks, where sparse-reward value learning must assign credit through long sequences of actions proposed by a frozen prior. Scaling MDA likely requires stronger value priors &mdash; pretrained critics or value decompositions that expose intermediate progress signals. <b>Second</b>, Stage II is reset-dependent and interaction-intensive. This is manageable in simulation but constrains real hardware, where failures, resets, and safety limit autonomous practice without an operator in the loop. Reducing this dependence will require safer exploration, better failure detection, learned resets, or lightweight intervention mechanisms that preserve the low-demonstration setting.
     </div>
 
     <div class="bibtex-code" id="bibtex">
       <div class="bibtex-title">BibTeX</div>
-      <pre><code>@inproceedings{videomimic,
-  title     = {Visual imitation enables contextual humanoid control},
-  author    = {Allshire, Arthur and Choi, Hongsuk and Zhang, Junyi and McAllister, David 
-               and Zhang, Anthony and Kim, Chung Min and Darrell, Trevor and Abbeel, 
-               Pieter and Malik, Jitendra and Kanazawa, Angjoo},
+      <pre><code>@inproceedings{midas2026,
+  title     = {Adaptation of Generalist Robot Policies with Minimal Data},
+  author    = {Anonymous},
   booktitle = {Proceedings of the Conference on Robot Learning (CoRL)},
-  year      = {2025}
+  year      = {2026},
+  note      = {Under review}
 }</code></pre>
     </div>
 
   </div> <!-- End of main-content div -->
 
-
   <div class="footer">
-    <!-- © UC Berkeley | Powered by vision, motion, and a little ambition. -->
-     © UC Berkeley | Webpage designed by the <span style="font-variant: small-caps;">VideoMimic</span> team. Source code is available <a href="https://github.com/videomimic-1/videomimic-1.github.io" target="_blank">here</a>.
+    Anonymous submission to CoRL 2026. Source available <a href="https://github.com/minimal-data-adaptation/minimal-data-adaptation.github.io" target="_blank">here</a>.
   </div>
-
-  <!-- Teaser Video Autoplay with Delay and Loop -->
-  <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const video = document.getElementById('teaser-video');
-    // const initialDelay = 1000; // No longer needed, autoplay attribute handles initial play
-    const loopDelay = 3000;    // 3 seconds delay before looping
-
-    // let initialPlayTimeout; // No longer needed
-    let loopTimeout;
-
-    if (video) {
-      // Ensure video is muted (already in HTML, but good practice)
-      video.muted = true;
-      // Controls are already in HTML, ensuring user can play if autoplay fails
-
-      // REMOVE JavaScript-based initial play:
-      /*
-      initialPlayTimeout = setTimeout(function() {
-        video.play().then(function() {
-          // Autoplay started
-        }).catch(function(error) {
-          console.log('Initial autoplay prevented for teaser video. User interaction might be needed.', error);
-          video.controls = true; // Ensure controls are visible
-        });
-      }, initialDelay);
-      */
-
-      // Loop with delay - this part can stay
-      video.addEventListener('ended', function() {
-        clearTimeout(loopTimeout); 
-        loopTimeout = setTimeout(function() {
-          video.currentTime = 0; 
-          video.play().catch(function(error) {
-            console.log('Delayed loop play prevented for teaser video:', error);
-          });
-        }, loopDelay);
-      });
-
-      // --- Clear Timeouts on Manual Pause ---
-      video.addEventListener('pause', function() {
-        if (!video.ended && video.currentTime > 0) {
-           // clearTimeout(initialPlayTimeout); // No longer needed
-           clearTimeout(loopTimeout);
-           console.log('Teaser video: Manual pause detected, clearing loop timeout.');
-        }
-      });
-
-      // --- Clear Timeouts on Manual Play (if paused before initial delay finishes) ---
-       video.addEventListener('play', function() {
-           // if (initialPlayTimeout) { // No longer needed
-           //     clearTimeout(initialPlayTimeout);
-           // }
-       });
-
-    } else {
-      console.error('Video element with ID "teaser-video" not found.');
-    }
-  });
-  </script>
-
-  <!-- JavaScript for Video Gallery Navigation -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const galleries = [
-        {
-          sectionId: 'gallery-section-anchor', // ID of the .video-gallery-section for sitting
-          galleryInnerId: 'videoGallerySitting',
-          scrollLeftBtnId: 'scrollLeftBtnSitting',
-          scrollRightBtnId: 'scrollRightBtnSitting'
-        },
-        {
-          sectionId: 'traversingGallerySection', // ID of the .video-gallery-section for traversing
-          galleryInnerId: 'videoGalleryTraversing',
-          scrollLeftBtnId: 'scrollLeftBtnTraversing',
-          scrollRightBtnId: 'scrollRightBtnTraversing'
-        },
-        {
-          sectionId: 'stairsGallerySection', // ID of the .video-gallery-section for stairs
-          galleryInnerId: 'videoGalleryStairs',
-          scrollLeftBtnId: 'scrollLeftBtnStairs',
-          scrollRightBtnId: 'scrollRightBtnStairs'
-        },
-        {
-          sectionId: 'reconstructionGallerySection', // ID of the .video-gallery-section for reconstruction
-          galleryInnerId: 'videoGalleryReconstruction',
-          scrollLeftBtnId: 'scrollLeftBtnReconstruction',
-          scrollRightBtnId: 'scrollRightBtnReconstruction'
-        }
-      ];
-
-      galleries.forEach(galleryConfig => {
-        const gallerySection = document.getElementById(galleryConfig.sectionId);
-        if (!gallerySection) {
-          console.error(`Gallery section with ID ${galleryConfig.sectionId} not found.`);
-          return;
-        }
-
-        const galleryContainer = gallerySection.querySelector('.video-gallery-container');
-        const galleryInner = document.getElementById(galleryConfig.galleryInnerId);
-        const scrollLeftBtn = document.getElementById(galleryConfig.scrollLeftBtnId);
-        const scrollRightBtn = document.getElementById(galleryConfig.scrollRightBtnId);
-
-        if (galleryContainer && galleryInner && scrollLeftBtn && scrollRightBtn) {
-          // Calculate the scroll amount based on the width of the first video + gap
-          const scrollAmount = (galleryInner.firstElementChild?.offsetWidth || 300) + 15; // 15 is the gap
-
-          scrollLeftBtn.addEventListener('click', () => {
-            // Scroll the CONTAINER element
-            galleryContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-          });
-
-          scrollRightBtn.addEventListener('click', () => {
-            // Scroll the CONTAINER element
-            galleryContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-          });
-
-          /* --- REMOVE OR COMMENT OUT HOVER LOGIC ---
-          // Optional: Add hover-to-play functionality for gallery videos
-          // Target videos within galleryInner
-          const galleryVideos = galleryInner.querySelectorAll('.gallery-video');
-          galleryVideos.forEach(video => {
-              video.addEventListener('mouseenter', () => {
-                  video.play().catch(e => console.log("Autoplay prevented:", e));
-              });
-              video.addEventListener('mouseleave', () => {
-                  video.pause();
-                  // video.currentTime = 0; // Optional: reset video on mouse leave
-              });
-          });
-          */ // --- END OF REMOVED HOVER LOGIC ---
-
-        } else {
-          console.error(`Gallery elements not found for navigation setup in section ${galleryConfig.sectionId}.`);
-          // Log which elements might be missing
-          if (!galleryContainer) console.error('Missing element: .video-gallery-container in section ' + galleryConfig.sectionId);
-          if (!galleryInner) console.error(`Missing element with ID ${galleryConfig.galleryInnerId}`);
-          if (!scrollLeftBtn) console.error(`Missing element with ID ${galleryConfig.scrollLeftBtnId}`);
-          if (!scrollRightBtn) console.error(`Missing element with ID ${galleryConfig.scrollRightBtnId}`);
-        }
-      });
-    });
-  </script>
-
-  <!-- JavaScript for Real-to-Sim Video Synchronization -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const videosToSync = [
-        document.querySelector('.r2s-video-input'),
-        document.querySelector('.r2s-video-smpl'),
-        document.querySelector('.r2s-video-g1'),
-        document.querySelector('.r2s-video-ego-rgb'),
-        document.querySelector('.r2s-video-ego-depth'),
-        document.querySelector('.r2s-video-sim')
-      ].filter(Boolean); // Filter out nulls if any class name is wrong or video missing
-
-      function synchronizeAndPlayR2SVideos() {
-        if (videosToSync.length === 0) {
-          console.warn('No videos found for Real-to-Sim synchronization.');
-          return;
-        }
-
-        const readyPromises = videosToSync.map(video => {
-          return new Promise((resolve, reject) => {
-            // If video is already ready (e.g., cached), resolve immediately
-            if (video.readyState >= 4) { // HAVE_ENOUGH_DATA (canplaythrough)
-              resolve();
-            } else {
-              video.addEventListener('canplaythrough', resolve, { once: true });
-              video.addEventListener('error', reject, { once: true }); // Handle potential loading errors
-            }
-          });
-        });
-
-        Promise.all(readyPromises)
-          .then(() => {
-            console.log('All Real-to-Sim videos are ready to play. Starting playback.');
-            videosToSync.forEach(video => {
-              video.currentTime = 0; // Ensure starting from the beginning
-              video.play().catch(error => {
-                console.warn(`Autoplay was prevented for video ${video.src}. User interaction might be needed.`, error);
-                // Ensure controls are visible if autoplay fails for any video
-                video.controls = true;
-              });
-            });
-          })
-          .catch(error => {
-            console.error('Error waiting for Real-to-Sim videos to be ready:', error);
-            // Optionally, provide a fallback or user message here
-            videosToSync.forEach(video => video.controls = true); // Show controls on all if any failed to load
-          });
-      }
-
-      synchronizeAndPlayR2SVideos();
-
-      // The `loop` attribute on the HTML video tags will handle continuous looping.
-      // The videos will naturally re-synchronize at their LCM due to the loop attribute
-      // if they have different durations and all successfully start.
-    });
-  </script>
-
-  <!-- JavaScript to prevent default click on specific image links -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const imageLinkIds = ['figure-1-img', 'figure-2-img', 'figure-3-img'];
-      imageLinkIds.forEach(id => {
-        const linkElement = document.getElementById(id);
-        if (linkElement) {
-          linkElement.addEventListener('click', function(event) {
-            event.preventDefault();
-          });
-        }
-      });
-    });
-  </script>
 
 </body>
 </html>
