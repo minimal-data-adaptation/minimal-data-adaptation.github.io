@@ -11,6 +11,9 @@
     <h3>Content</h3>
     <hr>
     <ul>
+      <li><a href="#vs-bc">MiDAS vs BC</a></li>
+      <li><a href="#progression">Learning progression</a></li>
+      <li><a href="#large-resets">Large-reset behaviours</a></li>
       <li><a href="#abstract">Abstract</a></li>
       <li><a href="#why-mda">MDA as proxy</a></li>
       <li><a href="#enables">What enables MDA?</a></li>
@@ -35,24 +38,107 @@
       <span class="affiliation">CoRL 2026 Submission &middot; Under Review</span>
     </div>
 
-    <div class="fig-single">
-      <img src="./figs/midas/main_fig.jpg" alt="Overview of minimal-data adaptation: pretraining + 1 demo + online residual RL">
+    <div class="teaser-video" data-label="Teaser video &middot; to be uploaded">
+      <!-- Drop in: <video src="./figs/midas/videos/teaser.mp4" autoplay muted loop playsinline></video> -->
     </div>
-    <p class="figure-caption">
-      <b>Overview.</b> A single demonstration is sparse and underdetermined on its own, but pretrained VLA representations turn it into a useful anchor for adaptation. Few-demo behavior cloning narrows the search space to a task-relevant region around the demonstration, and online residual RL then expands local success by learning value-guided corrections on top of the warm-started base policy.
-    </p>
 
     <div class="quick-links">
       <a href="./MinimalDataAdaptation.pdf" target="_blank">[pdf]</a>
       <a href="#" target="_blank">[code &mdash; coming soon]</a>
     </div>
 
+    <!-- ====================== ROLLOUT VIDEO SECTIONS (pre-abstract) ====================== -->
+    <div class="tagline" id="vs-bc">MiDAS vs BC.</div>
+    <div class="section-subtitle">T1 &middot; Green block to right container, blue block to left container</div>
+    <div class="rollout-grid">
+      <div class="rollout-box" data-label="T1 &middot; Rollout 1">
+        <!-- Drop in: <video src="./figs/midas/videos/vs_bc_t1_1.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="T1 &middot; Rollout 2">
+        <!-- Drop in: <video src="./figs/midas/videos/vs_bc_t1_2.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="T1 &middot; Rollout 3">
+        <!-- Drop in: <video src="./figs/midas/videos/vs_bc_t1_3.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="T1 &middot; Rollout 4">
+        <!-- Drop in: <video src="./figs/midas/videos/vs_bc_t1_4.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="T1 &middot; Rollout 5">
+        <!-- Drop in: <video src="./figs/midas/videos/vs_bc_t1_5.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="T1 &middot; Rollout 6">
+        <!-- Drop in: <video src="./figs/midas/videos/vs_bc_t1_6.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+    </div>
+
+    <div class="section-subtitle">T2 &middot; Knife and donut onto plate</div>
+    <div class="rollout-grid">
+      <div class="rollout-box" data-label="T2 &middot; Rollout 1">
+        <!-- Drop in: <video src="./figs/midas/videos/vs_bc_t2_1.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="T2 &middot; Rollout 2">
+        <!-- Drop in: <video src="./figs/midas/videos/vs_bc_t2_2.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="T2 &middot; Rollout 3">
+        <!-- Drop in: <video src="./figs/midas/videos/vs_bc_t2_3.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="T2 &middot; Rollout 4">
+        <!-- Drop in: <video src="./figs/midas/videos/vs_bc_t2_4.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="T2 &middot; Rollout 5">
+        <!-- Drop in: <video src="./figs/midas/videos/vs_bc_t2_5.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="T2 &middot; Rollout 6">
+        <!-- Drop in: <video src="./figs/midas/videos/vs_bc_t2_6.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+    </div>
+
+    <div class="tagline" id="progression">Learning Progression of MiDAS.</div>
+    <div class="progression-row">
+      <div class="rollout-box" data-label="T1 &middot; Progression">
+        <!-- Drop in: <video src="./figs/midas/videos/progression_t1.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="T2 &middot; Progression">
+        <!-- Drop in: <video src="./figs/midas/videos/progression_t2.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+    </div>
+
+    <div class="tagline" id="large-resets">MiDAS learns interesting new behaviours with large resets.</div>
+    <div class="rollout-grid">
+      <div class="rollout-box" data-label="Rollout 1">
+        <!-- Drop in: <video src="./figs/midas/videos/large_resets_1.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="Rollout 2">
+        <!-- Drop in: <video src="./figs/midas/videos/large_resets_2.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="Rollout 3">
+        <!-- Drop in: <video src="./figs/midas/videos/large_resets_3.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="Rollout 4">
+        <!-- Drop in: <video src="./figs/midas/videos/large_resets_4.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="Rollout 5">
+        <!-- Drop in: <video src="./figs/midas/videos/large_resets_5.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+      <div class="rollout-box" data-label="Rollout 6">
+        <!-- Drop in: <video src="./figs/midas/videos/large_resets_6.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+    </div>
+
+    <!-- ====================== ABSTRACT + PROXY ====================== -->
     <div class="tagline" id="abstract">Abstract.</div>
     <div class="section">
       A central goal of robot learning is to move beyond task-specific human data collection toward robots that improve through autonomous interaction. Yet fully autonomous learning remains difficult with current policies: sparse rewards and weak zero-shot exploration make it unlikely that a robot will discover successful behavior from scratch. We study <b>minimal-data adaptation</b>, a regime in which a pretrained robot policy must learn a new task from as little as one demonstration followed by autonomous online interaction. This setting minimizes task-specific supervision while testing whether pretrained policies provide enough structure to make reinforcement learning tractable. We present <b>MiDAS</b>, an offline-to-online RL framework that first anchors a pretrained VLA to the target task with few-demo behavior cloning, then improves it through value-based online residual RL. Across LIBERO and RoboCasa, MiDAS recovers strong task performance from as little as one demonstration, substantially outperforming baselines and generalizing beyond demonstrated conditions. To the best of our knowledge, this is the first demonstration of reliable robot policy adaptation from a single task demonstration. We further validate MiDAS on bimanual YAM hardware, where it learns effective behaviors with roughly six hours of autonomous interaction.
     </div>
 
     <div class="tagline" id="why-mda">MDA as the closest tractable proxy for autonomous adaptation.</div>
+
+    <div class="fig-single">
+      <img src="./figs/midas/main_fig.jpg" alt="Overview of minimal-data adaptation: pretraining + 1 demo + online residual RL">
+    </div>
+    <p class="figure-caption">
+      <b>Overview.</b> A single demonstration is sparse and underdetermined on its own, but pretrained VLA representations turn it into a useful anchor for adaptation. Few-demo behavior cloning narrows the search space to a task-relevant region around the demonstration, and online residual RL then expands local success by learning value-guided corrections on top of the warm-started base policy.
+    </p>
 
     <div class="pillars">
       <div class="pillar">

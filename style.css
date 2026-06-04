@@ -959,3 +959,107 @@ video.r2s-video-item {
   height: auto;
   display: block;
 }
+
+/* ============================================================ */
+/* === Video placeholders / rollout grids ===================== */
+/* ============================================================ */
+
+/* Teaser video at the top of the page, 16:9 */
+.teaser-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 15px;
+  border: 1.5px solid #1b1b1b;
+  overflow: hidden;
+  background-color: #f1eadb;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  margin: 20px 0;
+}
+.teaser-video::before {
+  content: attr(data-label);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  color: #888;
+  text-transform: uppercase;
+}
+.teaser-video > video,
+.teaser-video > img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  background-color: transparent;
+}
+
+/* 3 × 2 rollout grid for the eval-rollout sections */
+.rollout-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 16px 0 32px 0;
+}
+.rollout-box {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  border: 1.5px solid #1b1b1b;
+  overflow: hidden;
+  background-color: #f1eadb;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+.rollout-box::before {
+  content: attr(data-label);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #888;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0 8px;
+}
+.rollout-box > video,
+.rollout-box > img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  background-color: transparent;
+}
+
+/* Learning-progression: a single row of two videos side by side */
+.progression-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 16px 0 32px 0;
+}
+.progression-row .rollout-box {
+  aspect-ratio: 4 / 3;
+}
+
+@media (max-width: 700px) {
+  .rollout-grid { grid-template-columns: repeat(2, 1fr); }
+  .progression-row { grid-template-columns: 1fr; }
+}
+
+/* Section heading used for T1/T2 subsection labels — reuse .section-subtitle */
