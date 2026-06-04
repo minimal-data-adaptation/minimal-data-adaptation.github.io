@@ -667,23 +667,55 @@ video.r2s-video-item {
 
 /* Question / Finding pattern used in §5 and §6 */
 .qf-block {
-  margin: 40px 0 30px 0;
+  margin: 55px 0 40px 0;
+  padding: 4px 0 4px 26px;
+  border-left: 3px solid #1b1b1b;
+}
+.qf-num {
+  display: inline-block;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #fff;
+  background-color: #1b1b1b;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
 }
 .qf-question {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 16px;
-  color: #555;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin-bottom: 6px;
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 400;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 14px;
 }
 .qf-finding {
   font-family: 'Playfair Display', serif;
   font-size: 26px;
   font-weight: 700;
   line-height: 1.3;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
   color: #1b1b1b;
+}
+.qf-finding-label {
+  display: inline-block;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #b08d2c;
+  text-transform: uppercase;
+  vertical-align: middle;
+  margin-right: 10px;
+  padding: 2px 8px;
+  border: 1.5px solid #b08d2c;
+  border-radius: 3px;
+  position: relative;
+  top: -3px;
 }
 .qf-body {
   font-size: 19px;

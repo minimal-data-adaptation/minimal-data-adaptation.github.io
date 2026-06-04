@@ -12,8 +12,7 @@
     <hr>
     <ul>
       <li><a href="#abstract">Abstract</a></li>
-      <li><a href="#demos">What 1 demo gets you</a></li>
-      <li><a href="#regime">Minimal-Data Adaptation</a></li>
+      <li><a href="#why-mda">MDA as proxy</a></li>
       <li><a href="#enables">What enables MDA?</a></li>
       <li class="toc-subsection"><a href="#q1-coarse">Q1 &middot; Coarse behavior</a></li>
       <li class="toc-subsection"><a href="#q2-reps">Q2 &middot; Pretrained reps</a></li>
@@ -30,7 +29,7 @@
 
   <div class="main-content">
     <div class="hero-text">Adaptation of Generalist Robot Policies with Minimal Data</div>
-    <div class="sub-hero-text">A pretrained VLA, one demonstration, and autonomous interaction is enough &mdash; here&rsquo;s why.</div>
+    <div class="sub-hero-text">Pretraining enables one-shot downstream online adaptation.</div>
 
     <div class="authors anonymous">
       Anonymous Authors
@@ -54,9 +53,7 @@
       A central goal of robot learning is to move beyond task-specific human data collection toward robots that improve through autonomous interaction. Yet fully autonomous learning remains difficult with current policies: sparse rewards and weak zero-shot exploration make it unlikely that a robot will discover successful behavior from scratch. We study <b>minimal-data adaptation</b>, a regime in which a pretrained robot policy must learn a new task from as little as one demonstration followed by autonomous online interaction. This setting minimizes task-specific supervision while testing whether pretrained policies provide enough structure to make reinforcement learning tractable. We present <b>MiDAS</b>, an offline-to-online RL framework that first anchors a pretrained VLA to the target task with few-demo behavior cloning, then improves it through value-based online residual RL. Across LIBERO and RoboCasa, MiDAS recovers strong task performance from as little as one demonstration, substantially outperforming baselines and generalizing beyond demonstrated conditions. To the best of our knowledge, this is the first demonstration of reliable robot policy adaptation from a single task demonstration. We further validate MiDAS on bimanual YAM hardware, where it learns effective behaviors with roughly six hours of autonomous interaction.
     </div>
 
-    <div class="section">
-      Autonomous adaptation requires <b>three ingredients</b>. The policy must (i) represent high-dimensional observations in a form useful for control and value learning, (ii) produce behavior that reaches reward-bearing regions during deployment, and (iii) use this experience to improve efficiently. Modern VLAs make progress on (i) and (ii), but are not reliable zero-shot learners. Our central question: <i>can minimal task-specific supervision &mdash; a single demonstration &mdash; close this gap?</i>
-    </div>
+    <div class="tagline" id="why-mda">MDA as the closest tractable proxy for autonomous adaptation.</div>
 
     <div class="pillars">
       <div class="pillar">
@@ -79,48 +76,16 @@
       </div>
     </div>
 
-    <div class="tagline" id="demos">What does one demonstration get you?</div>
-    <div class="section">
-      Before the analysis, here is what one demonstration plus autonomous interaction actually achieves on a real bimanual robot. Using <span style="font-variant: small-caps;">&pi;<sub>0.5</sub></span> as the pretrained base policy and a single human demonstration, MiDAS runs online residual RL on a bimanual YAM platform and converges to high task success in roughly 5&ndash;6 hours of autonomous interaction.
-    </div>
-
-    <div class="filmstrip-row">
-      <img src="./figs/midas/rl_pickknife_filmstrip.png" alt="Real-world filmstrip: knife and donut onto plate (T2)">
-      <img src="./figs/midas/pickplace_blocks_film_strip.png" alt="Real-world filmstrip: green and blue block pick-and-place (T1)">
-    </div>
-    <p class="figure-caption">
-      <b>Real-world rollouts on a bimanual YAM platform.</b>
-      <b>(T1)</b> Place a green block in the right container and a blue block in the left. The 1-demo warm-start reaches <b>40%</b>; online RL improves it to <b>67%</b> and produces qualitatively new corrective behaviors.
-      <b>(T2)</b> Place a knife and a donut on a plate. The warm-start is substantially weaker; online RL improves success from <b>27% &rarr; 80%</b> after 5&ndash;6 hours of autonomous interaction.
-    </p>
-
-    <div class="fig-single">
-      <img src="./figs/midas/robocasa_all_tasks_grid.png" alt="RoboCasa task grid">
-    </div>
-    <p class="figure-caption">
-      <b>In simulation</b>, MiDAS adapts a pretrained VLA to long-horizon LIBERO-Long and RoboCasa-365 kitchen tasks from a single demonstration, recovering strong success rates where baselines stall (see Q3 below).
-    </p>
-
-    <div class="tagline" id="regime">The Minimal-Data Adaptation regime.</div>
-    <div class="section">
-      Given a pretrained vision&ndash;language&ndash;action policy <span style="font-variant: small-caps;">&pi;<sub>base</sub></span>, <i>K</i> successful demonstrations in a target environment, and access to autonomous interaction with that environment, <b>minimal-data adaptation (MDA)</b> asks whether we can learn an adapted policy that achieves high return using only this limited supervision. The demonstrations are not meant to solve the task on their own &mdash; they serve as a minimal scaffold that makes subsequent autonomous learning tractable. The case <i>K</i>&nbsp;=&nbsp;1 is the sharpest version: one demonstration is rarely sufficient for imitation, but may expose enough task-relevant behavior for interaction-driven improvement to begin.
-    </div>
-    <div class="section">
-      MDA targets the narrow regime where autonomous learning <i>first</i> becomes tractable. With no task-specific data, current pretrained policies often fail to reach reward often enough for sparse-reward interaction to improve them. A small number of demonstrations can make the problem just structured enough &mdash; exposing the intended behavior and bringing the policy into the vicinity of success &mdash; while leaving robustness and distribution coverage to be learned online. This regime separates the roles of the three available sources of supervision: structure inherited from <b>pretraining</b>, task information provided by a <b>demonstration</b>, and corrections learned through <b>autonomous interaction</b>.
-    </div>
-
     <!-- ====================== SECTION 5 ====================== -->
     <div class="tagline" id="enables">What enables minimal-data adaptation?</div>
-    <div class="section">
-      We dissect each of the three ingredients. Setup: we use <span style="font-variant: small-caps;">&pi;<sub>0.5</sub></span> as <span style="font-variant: small-caps;">&pi;<sub>base</sub></span> and run MiDAS with <i>K</i>&nbsp;=&nbsp;1 on <b>LIBERO-Long</b> (long-horizon language-conditioned manipulation) and <b>RoboCasa-365</b> (long-horizon household manipulation in diverse kitchen scenes).
-    </div>
 
     <!-- Q1 -->
     <div class="qf-block" id="q1-coarse">
-      <div class="qf-question">Question 1 &middot; what does the pretrained model + one demo recover?</div>
-      <div class="qf-finding">Finding: Pretraining and task-specific demonstrations together recover <i>coarse task behavior</i>, but not reliable control.</div>
+      <div class="qf-num">Question 1</div>
+      <div class="qf-question">What does the pretrained model + one demo recover?</div>
+      <div class="qf-finding"><span class="qf-finding-label">Finding</span>Pretraining and one demonstration recover <i>coarse task behavior</i>, but not reliable control.</div>
       <div class="qf-body">
-        We compare 1-demo BC on <span style="font-variant: small-caps;">&pi;<sub>0.5</sub></span> against three alternatives: <b>(a)</b> a flow-matching policy on pretrained ResNet features &mdash; tests whether <i>generic visual pretraining</i> suffices; <b>(b)</b> a flow-matching policy on <i>privileged state</i> &mdash; tests whether near-optimal observations alone close the gap; <b>(c)</b> the zero-shot <span style="font-variant: small-caps;">&pi;<sub>base</sub></span> &mdash; tests whether pretraining alone identifies the task. All three perform poorly. ResNet flow-policy gets non-zero success on only 3/10 LIBERO-Long tasks; the privileged-state policy and <span style="font-variant: small-caps;">&pi;<sub>base</sub></span> sit at 0%. <b>MDA needs both</b> task grounding from the demonstration <i>and</i> behavior-aware representations from pretraining &mdash; privileged state inputs alone do not recover this behavior, so the benefit of pretraining goes beyond improved state representation.
+        Across 1-demo BC, only the pretrained VLA recovers meaningful task behavior &mdash; neither pretrained ResNet features, privileged state, nor zero-shot <span style="font-variant: small-caps;">&pi;<sub>base</sub></span> succeed &mdash; so pretraining contributes more than just state representation.
       </div>
 
       <div class="fig-narrow">
@@ -129,7 +94,7 @@
       <p class="figure-caption"><b>Fig.</b> Performance of different task representations for behavior cloning. Only the pretrained VLA + 1 demo recovers any meaningful task behavior.</p>
 
       <div class="qf-body">
-        Yet even <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>1</sup> isn&rsquo;t reliable. Qualitatively, the policy approaches the right object, attempts the right subtask sequence, and follows a trajectory that resembles the demonstration. The failures are in execution: contact, alignment, grasping, and recovery remain brittle.
+        Even then <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>1</sup> isn&rsquo;t reliable: it reaches the right objects and follows the demonstrated trajectory, but contact, alignment, and grasping remain brittle.
       </div>
 
       <div class="fig-single">
@@ -142,8 +107,9 @@
 
     <!-- Q2 -->
     <div class="qf-block" id="q2-reps">
-      <div class="qf-question">Question 2 &middot; how much do pretrained representations help <i>online</i> learning?</div>
-      <div class="qf-finding">Finding: VLA representations are <i>control-aligned</i> &mdash; sparse-reward residual RL becomes dramatically more sample-efficient.</div>
+      <div class="qf-num">Question 2</div>
+      <div class="qf-question">How much do pretrained representations help <i>online</i> learning?</div>
+      <div class="qf-finding"><span class="qf-finding-label">Finding</span>VLA representations are <i>control-aligned</i> &mdash; sparse-reward residual RL becomes dramatically more sample-efficient.</div>
       <div class="qf-body">
         We vary the representation used by the residual learner while keeping everything else fixed.
         With a <b>ResNet fine-tuned from scratch</b>, MiDAS fails to converge at <i>K</i>=1 &mdash; sparse interaction can&rsquo;t learn task-relevant visual features <i>and</i> action priors simultaneously.
@@ -160,8 +126,9 @@
 
     <!-- Q3 -->
     <div class="qf-block" id="q3-support">
-      <div class="qf-question">Question 3 &middot; can the missing fine-grained control be reached <i>within</i> the base policy&rsquo;s support?</div>
-      <div class="qf-finding">Finding: No &mdash; closing the control gap requires actions <i>outside</i> the base policy&rsquo;s effective support. Value-based residual RL provides exactly this.</div>
+      <div class="qf-num">Question 3</div>
+      <div class="qf-question">Can the missing fine-grained control be reached <i>within</i> the base policy&rsquo;s support?</div>
+      <div class="qf-finding"><span class="qf-finding-label">Finding</span>No &mdash; closing the control gap requires actions <i>outside</i> the base policy&rsquo;s effective support. Value-based residual RL provides exactly this.</div>
       <div class="qf-body">
         The previous analysis showed that <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> often produces task-relevant behavior but solves the task inconsistently. Do the right actions already lie within its support but are not reliably selected, or do they fall outside its effective support? We test this by comparing MiDAS to two representative alternatives that stay <i>inside</i> the base policy&rsquo;s distribution:
         <b>Filtered BC</b>, which sharpens modes <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> already reaches by finetuning on successful online rollouts; and
@@ -242,8 +209,9 @@
 
     <!-- G1 -->
     <div class="qf-block" id="g1-obs">
-      <div class="qf-question">Question 1 &middot; do observation shifts (visual / language) break the adapted policy?</div>
-      <div class="qf-finding">Finding: Observation-level robustness is <i>inherited from the frozen vision&ndash;language backbone</i> &mdash; online RL doesn&rsquo;t cost it.</div>
+      <div class="qf-num">Question 1</div>
+      <div class="qf-question">Do observation shifts (visual / language) break the adapted policy?</div>
+      <div class="qf-finding"><span class="qf-finding-label">Finding</span>Observation-level robustness is <i>inherited from the frozen vision&ndash;language backbone</i> &mdash; online RL doesn&rsquo;t cost it.</div>
       <div class="qf-body">
         Under color and texture changes, <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>1</sup> retains most of its in-distribution performance, and the adapted policy shows a similar retention pattern despite using only a lightweight residual actor. The same holds under language paraphrases. Both policies share the same frozen VLM backbone, and the RL module adds little perceptual or linguistic capacity, so this robustness is best explained by invariances already present in the pretrained representation. <b>Online RL improves control without sacrificing observation-level generalization.</b>
       </div>
@@ -263,8 +231,9 @@
 
     <!-- G2 -->
     <div class="qf-block" id="g2-state">
-      <div class="qf-question">Question 2 &middot; what about state shifts that require the policy to act differently?</div>
-      <div class="qf-finding">Finding: Generalization depends on whether <i>new behavior</i> is required. Same behavior in a new location &mdash; yes. New affordance / strategy &mdash; no.</div>
+      <div class="qf-num">Question 2</div>
+      <div class="qf-question">What about state shifts that require the policy to act differently?</div>
+      <div class="qf-finding"><span class="qf-finding-label">Finding</span>Generalization depends on whether <i>new behavior</i> is required. Same behavior in a new location &mdash; yes. New affordance / strategy &mdash; no.</div>
       <div class="qf-body">
         Online RL improves over <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>1</sup> under some state shifts &mdash; especially <b>shape changes</b> where the required grasp is similar. This makes sense: the policy executes the same behavior in a different part of the state space. But performance drops sharply under <b>object swaps</b> and <b>object changes</b>: shifts in object affordance or placement can require distinct manipulation strategies, and these are difficult to infer from one demonstration plus interaction around it. This pathology is, in a sense, by design of the minimal-data regime.
       </div>
@@ -288,8 +257,9 @@
 
     <!-- G3 -->
     <div class="qf-block" id="g3-coverage">
-      <div class="qf-question">Question 3 &middot; can broader coverage &mdash; without more demonstrations &mdash; expand the generalization boundary?</div>
-      <div class="qf-finding">Finding: Yes. A reset-distribution curriculum recovers most of the position-generalization gap with a 50-demo policy &mdash; <i>without</i> additional demos.</div>
+      <div class="qf-num">Question 3</div>
+      <div class="qf-question">Can broader coverage &mdash; without more demonstrations &mdash; expand the generalization boundary?</div>
+      <div class="qf-finding"><span class="qf-finding-label">Finding</span>Yes. A reset-distribution curriculum recovers most of the position-generalization gap with a 50-demo policy &mdash; <i>without</i> additional demos.</div>
       <div class="qf-body">
         We progressively widen the reset distribution during online RL. Robustness improves with each stage, closing much of the gap to <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>50</sup> when the perturbed configurations preserve the same underlying manipulation strategy. Naively increasing the breadth of demonstrations helps too. Together, these results say: when the bottleneck is <i>state coverage</i> rather than missing behavior, autonomous interaction can extend the reach of minimal-data adaptation.
       </div>
