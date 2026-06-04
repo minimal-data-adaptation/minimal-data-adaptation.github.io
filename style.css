@@ -669,9 +669,19 @@ video.r2s-video-item {
 .qf-block {
   margin: 40px 0;
   padding: 26px 30px 24px 30px;
-  background-color: #f7efe2;
   border-radius: 16px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+/* Style A: warm cream filled card with soft shadow */
+.qf-block.qf-style-a {
+  background-color: #ecdfc2;
+  border: none;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.10);
+}
+/* Style B: outlined card on a lighter cream wash */
+.qf-block.qf-style-b {
+  background-color: #fcf6e8;
+  border: 1.5px solid #1b1b1b;
+  box-shadow: none;
 }
 .qf-num {
   display: inline-block;
@@ -853,6 +863,9 @@ video.r2s-video-item {
 .results-table th.midas-col {
   background-color: #fffbe9;
   font-weight: 700;
+}
+.results-table th.midas-col {
+  color: #1b1b1b;
 }
 .results-table tr.avg-row td.midas-col {
   background-color: #fff3b8;
