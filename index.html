@@ -109,18 +109,11 @@
       <div class="qf-num">Question 2</div>
       <div class="qf-question">How much do pretrained representations help <i>online</i> learning?</div>
       <div class="qf-finding"><span class="qf-finding-label">Finding</span>VLA representations are <i>control-aligned</i> &mdash; sparse-reward residual RL becomes dramatically more sample-efficient.</div>
-      <div class="qf-body">
-        We vary the representation used by the residual learner while keeping everything else fixed.
-        With a <b>ResNet fine-tuned from scratch</b>, MiDAS fails to converge at <i>K</i>=1 &mdash; sparse interaction can&rsquo;t learn task-relevant visual features <i>and</i> action priors simultaneously.
-        With <b>frozen DINO features</b>, learning eventually progresses but needs substantially more interaction &mdash; visual invariances alone aren&rsquo;t enough.
-        With features from the pretrained <span style="font-variant: small-caps;">&pi;<sub>0.5</sub></span> backbone, learning is rapid: VLA pretraining yields representations already <i>aligned with robot control</i>.
-        Notably, <span style="font-variant: small-caps;">&pi;<sub>base</sub></span>, <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup>, and <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>50</sup> features perform similarly &mdash; the sample-efficiency gain comes from the <i>pretrained representation</i>, not from task-specific BC of the backbone.
-      </div>
 
       <div class="fig-narrow">
         <img src="./figs/midas/libero_reps.png" alt="Online adaptation with different representations">
       </div>
-      <p class="figure-caption"><b>Fig.</b> Online adaptation with different representations. Frozen pretrained VLA features make sparse-reward residual RL sample-efficient where alternatives fail.</p>
+      <p class="figure-caption"><b>Online adaptation with different representations.</b> ResNet-from-scratch fails to converge; frozen DINO features eventually progress but slowly; frozen pretrained <span style="font-variant: small-caps;">&pi;<sub>0.5</sub></span> features enable rapid improvement. <span style="font-variant: small-caps;">&pi;<sub>base</sub></span>, <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup>, and <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>50</sup> behave similarly &mdash; the gain comes from <i>pretraining</i>, not task-specific BC of the backbone.</p>
     </div>
 
     <!-- Q3 -->
@@ -129,9 +122,7 @@
       <div class="qf-question">Can the missing fine-grained control be reached <i>within</i> the base policy&rsquo;s support?</div>
       <div class="qf-finding"><span class="qf-finding-label">Finding</span>No &mdash; closing the control gap requires actions <i>outside</i> the base policy&rsquo;s effective support. Value-based residual RL provides exactly this.</div>
       <div class="qf-body">
-        The previous analysis showed that <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> often produces task-relevant behavior but solves the task inconsistently. Do the right actions already lie within its support but are not reliably selected, or do they fall outside its effective support? We test this by comparing MiDAS to two representative alternatives that stay <i>inside</i> the base policy&rsquo;s distribution:
-        <b>Filtered BC</b>, which sharpens modes <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> already reaches by finetuning on successful online rollouts; and
-        <b>Diffusion-Steering RL (DSRL)</b>, which steers within the action distribution by modifying its initial noise. In contrast, MiDAS applies value-guided <i>residual</i> corrections, allowing executed actions to move beyond high-probability samples from the base policy.
+        Baselines that stay <i>inside</i> the base distribution &mdash; <b>Filtered BC</b> (sharpens what <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> already does) and <b>DSRL</b> (steers via its initial noise) &mdash; cannot reach the required action. MiDAS, with value-guided residual corrections, can.
       </div>
 
       <div class="fig-two-col">
@@ -147,10 +138,6 @@
       <p class="figure-caption">
         <b>MiDAS reaches actions outside the effective support of <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup>.</b> UMAP of action chunks at a critical step of a LIBERO-Long rollout. Filtered BC and DSRL remain concentrated near samples from <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> and fail; MiDAS selects an action in a disjoint region with higher <i>Q*</i> and succeeds.
       </p>
-
-      <div class="qf-body">
-        Empirically, Filtered BC and DSRL improve only marginally over <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup>, while MiDAS achieves substantially higher success across both benchmarks:
-      </div>
 
       <div class="results-table-wrapper">
         <table class="results-table">
@@ -193,10 +180,6 @@
       <p class="figure-caption">
         <b>Online learning curves on representative tasks.</b> MiDAS converges to high success within budget; baselines that stay inside the base policy&rsquo;s prior do not.
       </p>
-
-      <div class="qf-body">
-        The fine-grained control missing from <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> does not lie within the base policy&rsquo;s effective action prior. <b>Sharpening or steering within that prior cannot reach it.</b> Closing the control gap requires online adaptation that expands the action distribution beyond <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup>.
-      </div>
     </div>
 
     <!-- ====================== SECTION 6 ====================== -->
@@ -211,9 +194,6 @@
       <div class="qf-num">Question 1</div>
       <div class="qf-question">Do observation shifts (visual / language) break the adapted policy?</div>
       <div class="qf-finding"><span class="qf-finding-label">Finding</span>Observation-level robustness is <i>inherited from the frozen vision&ndash;language backbone</i> &mdash; online RL doesn&rsquo;t cost it.</div>
-      <div class="qf-body">
-        Under color and texture changes, <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>1</sup> retains most of its in-distribution performance, and the adapted policy shows a similar retention pattern despite using only a lightweight residual actor. The same holds under language paraphrases. Both policies share the same frozen VLM backbone, and the RL module adds little perceptual or linguistic capacity, so this robustness is best explained by invariances already present in the pretrained representation. <b>Online RL improves control without sacrificing observation-level generalization.</b>
-      </div>
 
       <div class="fig-grid-2">
         <div>
@@ -233,9 +213,6 @@
       <div class="qf-num">Question 2</div>
       <div class="qf-question">What about state shifts that require the policy to act differently?</div>
       <div class="qf-finding"><span class="qf-finding-label">Finding</span>Generalization depends on whether <i>new behavior</i> is required. Same behavior in a new location &mdash; yes. New affordance / strategy &mdash; no.</div>
-      <div class="qf-body">
-        Online RL improves over <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>1</sup> under some state shifts &mdash; especially <b>shape changes</b> where the required grasp is similar. This makes sense: the policy executes the same behavior in a different part of the state space. But performance drops sharply under <b>object swaps</b> and <b>object changes</b>: shifts in object affordance or placement can require distinct manipulation strategies, and these are difficult to infer from one demonstration plus interaction around it. This pathology is, in a sense, by design of the minimal-data regime.
-      </div>
 
       <div class="fig-grid-3">
         <div>
@@ -259,9 +236,6 @@
       <div class="qf-num">Question 3</div>
       <div class="qf-question">Can broader coverage &mdash; without more demonstrations &mdash; expand the generalization boundary?</div>
       <div class="qf-finding"><span class="qf-finding-label">Finding</span>Yes. A reset-distribution curriculum recovers most of the position-generalization gap with a 50-demo policy &mdash; <i>without</i> additional demos.</div>
-      <div class="qf-body">
-        We progressively widen the reset distribution during online RL. Robustness improves with each stage, closing much of the gap to <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>50</sup> when the perturbed configurations preserve the same underlying manipulation strategy. Naively increasing the breadth of demonstrations helps too. Together, these results say: when the bottleneck is <i>state coverage</i> rather than missing behavior, autonomous interaction can extend the reach of minimal-data adaptation.
-      </div>
 
       <div class="fig-narrow">
         <img src="./figs/midas/pos_perturbation_curriculum.png" alt="Curriculum closes the position-generalization gap">

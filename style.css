@@ -667,9 +667,11 @@ video.r2s-video-item {
 
 /* Question / Finding pattern used in §5 and §6 */
 .qf-block {
-  margin: 55px 0 40px 0;
-  padding: 4px 0 4px 26px;
-  border-left: 3px solid #1b1b1b;
+  margin: 40px 0;
+  padding: 26px 30px 24px 30px;
+  background-color: #f7efe2;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
 }
 .qf-num {
   display: inline-block;
