@@ -887,6 +887,33 @@ video.r2s-video-item {
   line-height: 1.65;
 }
 
+/* Shaded box that wraps the two main recipe stages */
+.recipe-box {
+  background-color: #f1eadb;
+  border: 1.5px solid #1b1b1b;
+  border-radius: 18px;
+  padding: 28px 32px 12px 32px;
+  margin: 30px 0;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+.recipe-box .recipe-step {
+  border-left: none;
+  padding: 0;
+  margin: 0 0 24px 0;
+  position: relative;
+}
+.recipe-box .recipe-step:last-child {
+  margin-bottom: 16px;
+}
+.recipe-box .recipe-step + .recipe-step {
+  border-top: 1px dashed rgba(27, 27, 27, 0.25);
+  padding-top: 22px;
+}
+.recipe-box .recipe-step-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
 /* Anonymous authors block (simpler) */
 .authors.anonymous {
   font-family: 'Roboto Mono', monospace;

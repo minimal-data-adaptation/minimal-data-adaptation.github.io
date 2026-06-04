@@ -21,8 +21,7 @@
       <li class="toc-subsection"><a href="#g1-obs">Q1 &middot; Observation shifts</a></li>
       <li class="toc-subsection"><a href="#g2-state">Q2 &middot; State shifts</a></li>
       <li class="toc-subsection"><a href="#g3-coverage">Q3 &middot; Coverage</a></li>
-      <li><a href="#method">MiDAS recipe</a></li>
-      <li><a href="#limitations">Limitations</a></li>
+      <li><a href="#method">MiDAS</a></li>
       <li><a href="#bibtex">BibTeX</a></li>
     </ul>
   </div>
@@ -271,22 +270,21 @@
     </div>
 
     <!-- ====================== METHOD ====================== -->
-    <div class="tagline" id="method">MiDAS &mdash; the recipe.</div>
-    <div class="section">
-      <b>MiDAS</b> (<b>Mi</b>nimal-<b>D</b>ata <b>A</b>daptation <b>S</b>trategy) is a two-stage instantiation of the principle above: pretraining + 1 demo seed coarse task behavior, and online residual RL closes the control gap. Stage I uses the demonstration to anchor the policy to the task; Stage II uses autonomous interaction to expand the action distribution toward reliable success.
-    </div>
+    <div class="tagline" id="method">Minimal-Data Adaptation Strategy (MiDAS).</div>
 
-    <div class="recipe-step">
-      <div class="recipe-step-title">Stage I &middot; Behavior cloning on <i>K</i> demonstrations</div>
-      <div class="recipe-step-body">
-        Adapt the pretrained VLA to the task: LoRA on the VLM backbone for compute efficiency, full fine-tuning of the action head with a flow-matching loss. The resulting policy <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> coarsely attempts the task but is not yet reliable.
+    <div class="recipe-box">
+      <div class="recipe-step">
+        <div class="recipe-step-title">Stage I &middot; Behavior cloning on <i>K</i> demonstrations</div>
+        <div class="recipe-step-body">
+          Adapt the pretrained VLA to the task: LoRA on the VLM backbone for compute efficiency, full fine-tuning of the action head with a flow-matching loss. The resulting policy <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> coarsely attempts the task but is not yet reliable.
+        </div>
       </div>
-    </div>
 
-    <div class="recipe-step">
-      <div class="recipe-step-title">Stage II &middot; Online residual RL with frozen backbone</div>
-      <div class="recipe-step-body">
-        Freeze <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> and train a lightweight residual actor&ndash;critic on top of its representations. At each state, the base policy proposes an action chunk; the residual policy conditions on the state <i>and</i> the proposal, and predicts the executed action directly (a Gaussian-tanh distribution). This conditioning anchors RL to a task-relevant proposal while letting the executed action shift to higher-value regions outside the base policy&rsquo;s reliable support. A critic ensemble is trained with TD learning.
+      <div class="recipe-step">
+        <div class="recipe-step-title">Stage II &middot; Online residual RL with frozen backbone</div>
+        <div class="recipe-step-body">
+          Freeze <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> and train a lightweight residual actor&ndash;critic on top of its representations. At each state, the base policy proposes an action chunk; the residual policy conditions on the state <i>and</i> the proposal, and predicts the executed action directly (a Gaussian-tanh distribution). This conditioning anchors RL to a task-relevant proposal while letting the executed action shift to higher-value regions outside the base policy&rsquo;s reliable support. A critic ensemble is trained with TD learning.
+        </div>
       </div>
     </div>
 
@@ -299,11 +297,6 @@
         <br><br>
         <b>(3) Residual training with PA-RL.</b> Sample a single base proposal, draw <i>N</i> residual samples conditioned on it, and apply a PA-RL Best-of-<i>N</i> distillation objective with an action gradient. This produces aggressive value-guided updates while needing only one forward pass through the expensive frozen base.
       </div>
-    </div>
-
-    <div class="tagline" id="limitations">Limitations.</div>
-    <div class="section">
-      Two caveats. <b>First</b>, the present instantiation remains limited on longer-horizon tasks, where sparse-reward value learning must assign credit through long sequences of actions proposed by a frozen prior. Scaling MDA likely requires stronger value priors &mdash; pretrained critics or value decompositions that expose intermediate progress signals. <b>Second</b>, Stage II is reset-dependent and interaction-intensive. This is manageable in simulation but constrains real hardware, where failures, resets, and safety limit autonomous practice without an operator in the loop. Reducing this dependence will require safer exploration, better failure detection, learned resets, or lightweight intervention mechanisms that preserve the low-demonstration setting.
     </div>
 
     <div class="bibtex-code" id="bibtex">
