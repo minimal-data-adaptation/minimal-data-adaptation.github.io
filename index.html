@@ -82,10 +82,7 @@
     <div class="qf-block qf-style-a" id="q1-coarse">
       <div class="qf-num">Question 1</div>
       <div class="qf-question">What does one demonstration recover?</div>
-      <div class="qf-finding"><span class="qf-finding-label">Finding</span>One demonstration is enough to recover task-directed behavior, but not enough to recover reliable control.</div>
-      <div class="qf-body">
-        Few-demo behavior cloning only works when the demonstration is paired with the pretrained VLA: generic visual features, privileged state inputs, and the zero-shot base policy all fail to recover meaningful success. This suggests that the pretrained model contributes more than a state representation alone; it provides behavior-aware structure that makes the demonstrated task recoverable from minimal data.
-      </div>
+      <div class="qf-finding"><span class="qf-finding-label">Finding</span>One demonstration coupled with pretraining recovers task-directed behavior, but not reliable control.</div>
 
       <div class="fig-narrow">
         <img src="./figs/midas/dp_bc_cmp.png" alt="Performance of different task representations for behavior cloning">
@@ -93,7 +90,7 @@
       <p class="figure-caption"><b>Fig.</b> Performance of different task representations for behavior cloning. Only the pretrained VLA + 1 demo recovers meaningful task behavior.</p>
 
       <div class="qf-body">
-        However, the resulting policy is still not reliable. It often reaches the correct objects and attempts the demonstrated subtask sequence, but failures remain concentrated in contact-rich execution: alignment, grasp closure, precise placement, and recovery from small deviations.
+        The resulting policy often reaches the correct objects and attempts the demonstrated subtask sequence, but failures remain concentrated in contact-rich execution: alignment, grasp closure, precise placement, and recovery from small deviations.
       </div>
 
       <div class="fig-single">
@@ -111,7 +108,7 @@
       <div class="qf-finding"><span class="qf-finding-label">Finding</span>Pretrained VLA representations substantially improve the sample-efficiency of sparse-reward residual RL.</div>
 
       <div class="qf-body">
-        The one-demo policy anchors the search around task-relevant behavior, but online RL must still learn from sparse reward interactions. This becomes difficult if the residual learner must also learn useful visual features. With a ResNet trained from scratch, online adaptation fails; with frozen DINO features, it improves slowly. In contrast, frozen features from the pretrained VLA enable rapid improvement, suggesting that VLA pretraining provides representations already useful for value learning and fine-grained control. The similarity between <span style="font-variant: small-caps;">&pi;<sub>base</sub></span>, <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup>, and <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup>50</sup> features further suggests that this gain comes primarily from pretraining, rather than task-specific BC of the backbone.
+        The one-demo policy anchors the search near task-relevant behavior, but sparse-reward online RL remains difficult when the residual learner must infer useful state abstractions while also learning the fine-grained control corrections needed for success.
       </div>
 
       <div class="fig-narrow">
@@ -126,7 +123,7 @@
       <div class="qf-question">What kind of policy improvement is needed after few-demo behavior cloning?</div>
       <div class="qf-finding"><span class="qf-finding-label">Finding</span>Minimal-data adaptation requires value-guided updates that can move beyond the few-demo policy&rsquo;s effective action support.</div>
       <div class="qf-body">
-        After behavior cloning, <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> often attempts the right task but fails at precise execution. We ask whether the missing actions are already present within the base policy distribution, but not selected reliably, or whether successful adaptation requires moving outside that distribution. Baselines that remain inside the base policy&rsquo;s prior &mdash; <b>Filtered BC</b>, which sharpens successful behavior already produced by the policy, and <b>DSRL</b>, which steers within the policy distribution &mdash; improve only marginally. MiDAS succeeds because value-based residual RL can select corrective actions in higher-value regions that the base policy does not reliably produce.
+        To close the control gap, online adaptation must not only reuse the base policy&rsquo;s task-relevant behavior, but also explore and learn corrective actions outside its effective action support.
       </div>
 
       <div class="fig-two-col">
@@ -200,10 +197,6 @@
       <div class="qf-num">Finding 1</div>
       <div class="qf-finding">Observation-level robustness is inherited from the frozen vision-language backbone.</div>
 
-      <div class="qf-body">
-        MiDAS preserves robustness to visual and language changes because online RL does not relearn perception from scratch. The residual learner operates on the frozen VLA representation, so improvements in control do not erase the visual and linguistic invariances already present in the pretrained model.
-      </div>
-
       <div class="fig-grid-2">
         <div>
           <img src="./figs/midas/obj_perturbation_comparison.png" alt="Visual shift">
@@ -221,10 +214,6 @@
     <div class="qf-block qf-style-b" id="g2-state">
       <div class="qf-num">Finding 2</div>
       <div class="qf-finding">State generalization depends on whether the same underlying behavior still solves the task.</div>
-
-      <div class="qf-body">
-        Online RL improves robustness when the shift only requires executing the learned behavior in a different physical configuration, such as moderate pose or shape variation. It does not reliably bridge shifts that change the required manipulation strategy: object swaps, altered affordances, or object identities outside the one-demo support can require behaviors that the warm-start policy never exposes.
-      </div>
 
       <div class="fig-grid-3">
         <div>
@@ -249,7 +238,7 @@
       <div class="qf-finding">Coverage is critical for generalization.</div>
 
       <div class="qf-body">
-        Position perturbations expose a gap between in-distribution success and robustness to larger state shifts. This gap is not simply due to the residual policy parameterization: even distilling successful one-demo MiDAS rollouts back into the base policy does not recover the robustness of a policy trained on broader demonstrations. Instead, the gap is driven by coverage. Broader demonstrations expose the policy to a wider region of state space and stronger motion priors, while a reset-distribution curriculum provides an autonomous way to increase coverage. Progressively widening the reset distribution during online RL therefore recovers much of the position-generalization gap to a 50-demo policy, without collecting additional demonstrations.
+        This coverage can come either from additional sub-optimal demonstrations or from progressively widening the reset distribution during online RL.
       </div>
 
       <div class="fig-narrow">
