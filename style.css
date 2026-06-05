@@ -520,7 +520,8 @@ video.r2s-video-item {
   font-size: 20px;
   background: #000;
   color: #fff;
-  display: inline-block;
+  display: block;
+  width: fit-content;
   padding: 6px 14px;
   margin: 30px 0;
 }
@@ -964,11 +965,11 @@ video.r2s-video-item {
 /* === Video placeholders / rollout grids ===================== */
 /* ============================================================ */
 
-/* Teaser video at the top of the page, 16:9 */
+/* Teaser video at the top of the page — native aspect 1440:576 = 5:2 */
 .teaser-video {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 5 / 2;
   border-radius: 15px;
   border: 1.5px solid #1b1b1b;
   overflow: hidden;
@@ -1011,7 +1012,7 @@ video.r2s-video-item {
 }
 .rollout-box {
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 450 / 514;  /* native size of rollout/eval videos */
   border-radius: 14px;
   border: 1.5px solid #1b1b1b;
   overflow: hidden;
@@ -1054,7 +1055,15 @@ video.r2s-video-item {
   margin: 16px 0 32px 0;
 }
 .progression-row .rollout-box {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 448 / 260;  /* native size of progression compilation videos */
+}
+
+/* Centered single-video container for the large-resets section (same
+   native aspect as the rollout boxes, but standalone and constrained
+   so it does not dominate the page) */
+.single-video {
+  max-width: 480px;
+  margin: 24px auto;
 }
 
 @media (max-width: 700px) {
