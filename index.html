@@ -219,17 +219,10 @@
       <div class="qf-num">Finding 1</div>
       <div class="qf-finding">Observation-level robustness is inherited from the frozen vision-language backbone.</div>
 
-      <div class="fig-grid-2">
-        <div>
-          <img src="./figs/midas/obj_perturbation_comparison.png" alt="Visual shift">
-          <div class="sub-caption">(a) Visual shift (color / texture)</div>
-        </div>
-        <div>
-          <img src="./figs/midas/lang_perturbation_comparison.png" alt="Language shift">
-          <div class="sub-caption">(b) Language shift (paraphrase)</div>
-        </div>
+      <div class="fig-narrow">
+        <img src="./figs/midas/obs_shift_comparison.png" alt="Performance of BC and MiDAS under observation shifts (visual and language)">
       </div>
-      <p class="figure-caption"><b>Observation shifts.</b> Pretrained representations preserve performance under visual and language changes.</p>
+      <p class="figure-caption"><b>Performance of BC and MiDAS under observation shifts.</b> Pretrained representations preserve performance under visual and language changes.</p>
     </div>
 
     <!-- Finding 2 -->
@@ -237,21 +230,10 @@
       <div class="qf-num">Finding 2</div>
       <div class="qf-finding">State generalization depends on whether the same underlying behavior still solves the task.</div>
 
-      <div class="fig-grid-3">
-        <div>
-          <img src="./figs/midas/shape_perturbation_comparison.png" alt="Shape change">
-          <div class="sub-caption">(a) Shape change</div>
-        </div>
-        <div>
-          <img src="./figs/midas/swp_perturbation_comparison.png" alt="Object swap">
-          <div class="sub-caption">(b) Object swap</div>
-        </div>
-        <div>
-          <img src="./figs/midas/object_change_comparison.png" alt="Object change">
-          <div class="sub-caption">(c) Object change</div>
-        </div>
+      <div class="fig-narrow">
+        <img src="./figs/midas/state_shift_comparison.png" alt="Performance of BC and MiDAS under state shifts (object swap, shape change, object change)">
       </div>
-      <p class="figure-caption"><b>State shifts.</b> Online RL improves robustness when the same manipulation behavior suffices. It degrades when the shift demands a distinct affordance or strategy.</p>
+      <p class="figure-caption"><b>Performance of BC and MiDAS under state shifts.</b> Online RL improves robustness when the same manipulation behavior suffices. It degrades when the shift demands a distinct affordance or strategy.</p>
     </div>
 
     <!-- Finding 3 -->
