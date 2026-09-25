@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Adaptation of Generalist Robot Policies with Minimal Data</title>
+  <title>What Does It Take For A Generalist Robot Policy To Adapt From Minimal Data?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <meta name="referrer" content="no-referrer">
@@ -22,7 +22,6 @@
       <li class="toc-subsection"><a href="#q1-coarse">Q1 &middot; Coarse behavior</a></li>
       <li class="toc-subsection"><a href="#q2-reps">Q2 &middot; Pretrained reps</a></li>
       <li class="toc-subsection"><a href="#q3-support">Q3 &middot; Beyond the prior</a></li>
-      <li><a href="#sim-results">Sim results</a></li>
       <li><a href="#generalization">Generalization &amp; robustness</a></li>
       <li class="toc-subsection"><a href="#g1-obs">Finding 1</a></li>
       <li class="toc-subsection"><a href="#g2-state">Finding 2</a></li>
@@ -32,12 +31,12 @@
   </div>
 
   <div class="main-content">
-    <div class="hero-text">Adaptation of Generalist Robot Policies with Minimal Data</div>
-    <div class="sub-hero-text">Pretraining enables one-shot downstream online adaptation.</div>
+    <div class="hero-text">What Does It Take For A Generalist Robot Policy To Adapt From Minimal Data?</div>
+    <div class="sub-hero-text">One demonstration can make online adaptation tractable.</div>
 
     <div class="authors anonymous">
       Anonymous Authors
-      <span class="affiliation">CoRL 2026 Submission &middot; Under Review</span>
+      <span class="affiliation">ICLR 2027 Submission &middot; Under Review</span>
     </div>
 
     <div class="teaser-video">
@@ -46,29 +45,7 @@
 
     <!-- ====================== ROLLOUT VIDEO SECTIONS (pre-abstract) ====================== -->
     <div class="tagline" id="real-world">Real-world results.</div>
-    <div class="section-subtitle">T1 &middot; Knife and donut onto plate</div>
-    <div class="rollout-grid">
-      <div class="rollout-box">
-        <video src="./figs/midas/videos/vs_bc_t1_1.mp4" autoplay muted loop playsinline></video>
-      </div>
-      <div class="rollout-box">
-        <video src="./figs/midas/videos/vs_bc_t1_2.mp4" autoplay muted loop playsinline></video>
-      </div>
-      <div class="rollout-box">
-        <video src="./figs/midas/videos/vs_bc_t1_3.mp4" autoplay muted loop playsinline></video>
-      </div>
-      <div class="rollout-box">
-        <video src="./figs/midas/videos/vs_bc_t1_4.mp4" autoplay muted loop playsinline></video>
-      </div>
-      <div class="rollout-box">
-        <video src="./figs/midas/videos/vs_bc_t1_5.mp4" autoplay muted loop playsinline></video>
-      </div>
-      <div class="rollout-box">
-        <video src="./figs/midas/videos/vs_bc_t1_6.mp4" autoplay muted loop playsinline></video>
-      </div>
-    </div>
-
-    <div class="section-subtitle">T2 &middot; Green block to right container, blue block to left container</div>
+    <div class="section-subtitle">T1 &middot; Green block to right container, blue block to left container</div>
     <div class="rollout-grid">
       <div class="rollout-box">
         <video src="./figs/midas/videos/vs_bc_t2_1.mp4" autoplay muted loop playsinline></video>
@@ -87,6 +64,28 @@
       </div>
       <div class="rollout-box">
         <video src="./figs/midas/videos/vs_bc_t2_6.mp4" autoplay muted loop playsinline></video>
+      </div>
+    </div>
+
+    <div class="section-subtitle">T2 &middot; Knife and donut onto plate</div>
+    <div class="rollout-grid">
+      <div class="rollout-box">
+        <video src="./figs/midas/videos/vs_bc_t1_1.mp4" autoplay muted loop playsinline></video>
+      </div>
+      <div class="rollout-box">
+        <video src="./figs/midas/videos/vs_bc_t1_2.mp4" autoplay muted loop playsinline></video>
+      </div>
+      <div class="rollout-box">
+        <video src="./figs/midas/videos/vs_bc_t1_3.mp4" autoplay muted loop playsinline></video>
+      </div>
+      <div class="rollout-box">
+        <video src="./figs/midas/videos/vs_bc_t1_4.mp4" autoplay muted loop playsinline></video>
+      </div>
+      <div class="rollout-box">
+        <video src="./figs/midas/videos/vs_bc_t1_5.mp4" autoplay muted loop playsinline></video>
+      </div>
+      <div class="rollout-box">
+        <video src="./figs/midas/videos/vs_bc_t1_6.mp4" autoplay muted loop playsinline></video>
       </div>
     </div>
 
@@ -110,7 +109,7 @@
     <!-- ====================== ABSTRACT + PROXY ====================== -->
     <div class="tagline" id="abstract">Abstract.</div>
     <div class="section">
-      A central goal of robot learning is to move beyond task-specific human data collection toward robots that improve through autonomous interaction. Yet fully autonomous learning remains difficult with current policies: sparse rewards and weak zero-shot exploration make it unlikely that a robot will discover successful behavior from scratch. We study <b>minimal-data adaptation</b>, a regime in which a pretrained robot policy must learn a new task from as little as one demonstration followed by autonomous online interaction. This setting minimizes task-specific supervision while testing whether pretrained policies provide enough structure to make reinforcement learning tractable. We present <b>MiDAS</b>, an offline-to-online RL framework that first anchors a pretrained VLA to the target task with few-demo behavior cloning, then improves it through value-based online residual RL. Across LIBERO and RoboCasa, MiDAS recovers strong task performance from as little as one demonstration, substantially outperforming baselines and generalizing beyond demonstrated conditions. To the best of our knowledge, this is the first demonstration of reliable robot policy adaptation from a single task demonstration. We further validate MiDAS on bimanual YAM hardware, where it learns effective behaviors with roughly six hours of autonomous interaction.
+      A central goal in robot learning is to move beyond task-specific human data collection toward robots that improve through autonomous interaction. Yet fully autonomous learning remains difficult with current policies: sparse rewards and weak zero-shot exploration often prevent online learning from discovering successful behavior. As a first step towards fully autonomous learning, we propose the <b>minimal-data adaptation</b> regime, in which a pre-trained robot policy must learn a new task from as little as one demonstration followed by autonomous online interaction. We establish that, although pre-trained policies fail zero-shot on many new tasks, a single demonstration suffices to direct their behavioral prior to coarse task-following behavior, albeit with unreliable performance. From this insight, we isolate the key design principles required to convert coarse task-following into reliable task success. These include (1) the surprising efficacy of pre-trained VLA representations to support sample-efficient value learning from online interaction (2) the sufficiency of residual policy learning to learn corrective behavior and (3) the need for careful data-balancing to prevent exploration collapse. As a representative of these principles, we propose <b>MiDAS</b>, a simple offline-to-online RL recipe that combines few-demonstration behavior cloning with value-based residual learning over frozen VLA representations. Across LIBERO and RoboCasa tasks, MiDAS substantially improves performance from single-demonstration initializations, including policies that succeed only rarely, validating the principles highlighted above. On a bimanual YAM platform, starting from a brittle initial policy, MiDAS improves task success after approximately six hours of online interaction.
     </div>
 
     <div class="tagline" id="why-mda">MDA as the closest tractable proxy for autonomous adaptation.</div>
@@ -153,9 +152,9 @@
       <div class="qf-finding"><span class="qf-finding-label">Finding</span>One demonstration coupled with pretraining recovers task-directed behavior, but not reliable control.</div>
 
       <div class="fig-narrow">
-        <img src="./figs/midas/dp_bc_cmp.png" alt="Performance of different task representations for behavior cloning">
+        <img src="./figs/midas/flow_bc_cmp.png" alt="Performance of different state representations for behavior cloning">
       </div>
-      <p class="figure-caption"><b>Fig.</b> Performance of different task representations for behavior cloning. Only the pretrained VLA + 1 demo recovers meaningful task behavior.</p>
+      <p class="figure-caption"><b>Fig.</b> Performance of different state representations for behavior cloning. Only the pretrained VLA + 1 demo recovers meaningful task behavior.</p>
 
       <div class="qf-body">
         The resulting policy often reaches the correct objects and attempts the demonstrated subtask sequence, but failures remain concentrated in contact-rich execution: alignment, grasp closure, precise placement, and recovery from small deviations.
@@ -207,44 +206,6 @@
       <p class="figure-caption">
         <b>MiDAS reaches actions outside the effective support of <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup>.</b> UMAP of action chunks at a critical step of a LIBERO-Long rollout. Filtered BC and DSRL remain concentrated near samples from <span style="font-variant: small-caps;">&pi;<sub>base</sub></span><sup><i>K</i></sup> and fail; MiDAS selects an action in a disjoint region with higher <i>Q*</i> and succeeds.
       </p>
-    </div>
-
-    <!-- ====================== IN-DISTRIBUTION SIM RESULTS ====================== -->
-    <div class="tagline" id="sim-results">In-distribution simulation evaluation.</div>
-
-    <div class="results-table-wrapper">
-      <table class="results-table">
-        <caption><b>Table 1.</b> One-demo adaptation results (% success, mean &plusmn; std over 3 seeds).</caption>
-        <thead>
-          <tr>
-            <th class="task-col">Task</th>
-            <th>BC</th>
-            <th>DSRL</th>
-            <th>Filt. BC</th>
-            <th class="midas-col">MiDAS</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="benchmark-row"><td colspan="5">LIBERO-Long</td></tr>
-          <tr><td class="task-col">Alph. Soup + Cr. Cheese &rarr; Basket</td><td>12.7<span class="pm">&plusmn;1.2</span></td><td>16.0<span class="pm">&plusmn;6.9</span></td><td>14.0<span class="pm">&plusmn;2.0</span></td><td class="midas-col">98.7<span class="pm">&plusmn;1.2</span></td></tr>
-          <tr><td class="task-col">Alph. Soup + Tom. Sauce &rarr; Basket</td><td>4.0<span class="pm">&plusmn;3.5</span></td><td>3.3<span class="pm">&plusmn;1.2</span></td><td>2.0<span class="pm">&plusmn;0.0</span></td><td class="midas-col">82.0<span class="pm">&plusmn;5.3</span></td></tr>
-          <tr><td class="task-col">Black Bowl &rarr; Bottom Drawer</td><td>22.7<span class="pm">&plusmn;6.4</span></td><td>26.7<span class="pm">&plusmn;1.2</span></td><td>28.7<span class="pm">&plusmn;10.3</span></td><td class="midas-col">96.7<span class="pm">&plusmn;2.3</span></td></tr>
-          <tr><td class="task-col">Book &rarr; Caddy</td><td>37.3<span class="pm">&plusmn;7.0</span></td><td>30.7<span class="pm">&plusmn;12.2</span></td><td>28.0<span class="pm">&plusmn;2.0</span></td><td class="midas-col">92.7<span class="pm">&plusmn;5.0</span></td></tr>
-          <tr><td class="task-col">Both Moka Pots &rarr; Stove</td><td>13.3<span class="pm">&plusmn;3.1</span></td><td>20.7<span class="pm">&plusmn;2.3</span></td><td>19.3<span class="pm">&plusmn;7.0</span></td><td class="midas-col">90.7<span class="pm">&plusmn;2.3</span></td></tr>
-          <tr><td class="task-col">Cr. Cheese + Butter &rarr; Basket</td><td>34.0<span class="pm">&plusmn;9.2</span></td><td>39.3<span class="pm">&plusmn;1.2</span></td><td>68.0<span class="pm">&plusmn;2.0</span></td><td class="midas-col">100.0<span class="pm">&plusmn;0.0</span></td></tr>
-          <tr><td class="task-col">Moka Pot &rarr; Stove</td><td>84.0<span class="pm">&plusmn;0.0</span></td><td>92.7<span class="pm">&plusmn;3.1</span></td><td>85.3<span class="pm">&plusmn;8.3</span></td><td class="midas-col">94.0<span class="pm">&plusmn;0.0</span></td></tr>
-          <tr><td class="task-col">White Mug + Choc. Pudding</td><td>33.3<span class="pm">&plusmn;11.7</span></td><td>33.3<span class="pm">&plusmn;10.3</span></td><td>39.3<span class="pm">&plusmn;2.3</span></td><td class="midas-col">85.3<span class="pm">&plusmn;4.2</span></td></tr>
-          <tr><td class="task-col">White Mug + Plates</td><td>30.0<span class="pm">&plusmn;2.0</span></td><td>23.3<span class="pm">&plusmn;3.1</span></td><td>34.7<span class="pm">&plusmn;6.4</span></td><td class="midas-col">76.0<span class="pm">&plusmn;2.0</span></td></tr>
-          <tr><td class="task-col">Yellow-White Mug &rarr; Microwave</td><td>64.0<span class="pm">&plusmn;2.0</span></td><td>47.3<span class="pm">&plusmn;8.3</span></td><td>68.0<span class="pm">&plusmn;7.2</span></td><td class="midas-col">84.7<span class="pm">&plusmn;4.2</span></td></tr>
-          <tr class="avg-row"><td class="task-col">Average</td><td>33.5<span class="pm">&plusmn;1.8</span></td><td>33.3<span class="pm">&plusmn;2.0</span></td><td>38.7<span class="pm">&plusmn;4.8</span></td><td class="midas-col">90.1<span class="pm">&plusmn;0.4</span></td></tr>
-          <tr class="benchmark-row"><td colspan="5">RoboCasa</td></tr>
-          <tr><td class="task-col">Banana: Fridge Drawer &rarr; Shelf</td><td>13.3<span class="pm">&plusmn;2.5</span></td><td>13.9<span class="pm">&plusmn;0.2</span></td><td>19.3<span class="pm">&plusmn;3.1</span></td><td class="midas-col">95.2<span class="pm">&plusmn;2.8</span></td></tr>
-          <tr><td class="task-col">Hot Dog: Counter &rarr; Cabinet</td><td>29.3<span class="pm">&plusmn;0.9</span></td><td>17.6<span class="pm">&plusmn;8.4</span></td><td>36.0<span class="pm">&plusmn;24.0</span></td><td class="midas-col">87.1<span class="pm">&plusmn;8.6</span></td></tr>
-          <tr><td class="task-col">Mug &rarr; Coffee Machine + Start</td><td>24.0<span class="pm">&plusmn;7.1</span></td><td>24.7<span class="pm">&plusmn;3.7</span></td><td>46.7<span class="pm">&plusmn;6.2</span></td><td class="midas-col">81.9<span class="pm">&plusmn;5.7</span></td></tr>
-          <tr><td class="task-col">Cup + Bowl &rarr; Dishwasher + Close</td><td>0.0<span class="pm">&plusmn;0.0</span></td><td>0.0<span class="pm">&plusmn;0.0</span></td><td>0.0<span class="pm">&plusmn;0.0</span></td><td class="midas-col">0.0<span class="pm">&plusmn;0.0</span></td></tr>
-          <tr class="avg-row"><td class="task-col">Average</td><td>22.2<span class="pm">&plusmn;3.5</span></td><td>18.7<span class="pm">&plusmn;4.1</span></td><td>34.0<span class="pm">&plusmn;10.6</span></td><td class="midas-col">88.1<span class="pm">&plusmn;5.7</span></td></tr>
-        </tbody>
-      </table>
     </div>
 
     <!-- ====================== SECTION 6 ====================== -->
@@ -341,7 +302,7 @@
   </div> <!-- End of main-content div -->
 
   <div class="footer">
-    Anonymous submission to CoRL 2026.
+    Anonymous submission to ICLR 2027.
   </div>
 
 </body>
