@@ -954,6 +954,17 @@ video.r2s-video-item {
   font-size: 16px;
   color: #111;
 }
+/* Official CMU horizontal wordmark (3000x266, transparent). Brand minimum is 300px wide. */
+.authors .affiliation-logo {
+  display: block;
+  width: 300px;
+  max-width: 100%;
+  height: auto;
+  margin: 12px 0 8px 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
 .authors .author-notes {
   margin-top: 4px;
   font-size: 13px;
