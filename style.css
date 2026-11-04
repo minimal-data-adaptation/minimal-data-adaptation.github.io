@@ -954,6 +954,11 @@ video.r2s-video-item {
   font-size: 16px;
   color: #111;
 }
+.authors .author-notes {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #666;
+}
 
 /* Force figures inside .qf-block to inherit no-margin */
 .qf-block img {
@@ -977,7 +982,7 @@ video.r2s-video-item {
 /* === Video placeholders / rollout grids ===================== */
 /* ============================================================ */
 
-/* Teaser video at the top of the page — native aspect 1440:576 = 5:2 */
+/* Teaser video at the top of the page — native aspect 2160:864 = 5:2 */
 .teaser-video {
   position: relative;
   width: 100%;
